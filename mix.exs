@@ -15,7 +15,9 @@ defmodule Mix.Tasks.Compile.Numy do
   def run(_args) do
     {result, _errcode} = System.cmd(
       "make",
-      ["MIX_ENV=#{Mix.env}"]
+      [ "MIX_ENV=#{Mix.env}",
+        "NUMY_VERSION=#{Numy.MixProject.project[:version]}"
+      ]
       #stdout_to_stderr: true
     )
     IO.binwrite(result)
