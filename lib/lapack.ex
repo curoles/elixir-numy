@@ -5,11 +5,14 @@ defmodule Numy.NIF.Lapack do
 
   @on_load :load_nifs
 
+  mix_app_ = Mix.Project.config[:app]
+
   @doc """
   Callback on module's load. Loads NIF shared library.
   """
   def load_nifs do
-    :erlang.load_nif('./priv/libnumy', 0)
+    path = :filename.join(:code.priv_dir(unquote(mix_app_)), 'libnumy')
+    :erlang.load_nif(path, 0)
   end
 
   @doc """
@@ -21,6 +24,7 @@ defmodule Numy.NIF.Lapack do
       iex> Numy.NIF.Lapack.numy_version
       '0.1.0'
   """
+  @spec numy_version() :: String.t
   def numy_version() do
     raise "NIF numy_version/0 not implemented"
   end
