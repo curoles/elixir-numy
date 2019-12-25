@@ -7,10 +7,15 @@ defmodule Mix.Tasks.Compile.Numy do
 
   See https://hexdocs.pm/mix/1.0.5/Mix.Tasks.Compile.html
   """
+
+  @doc """
+  Callback implementation https://hexdocs.pm/mix/1.0.5/Mix.Tasks.Compile.html#run/1
+  """
+  @spec run(OptionParser.argv) :: :ok | :noop
   def run(_args) do
     {result, _errcode} = System.cmd(
       "make",
-      []
+      ["MIX_ENV=#{Mix.env}"]
       #stdout_to_stderr: true
     )
     IO.binwrite(result)
@@ -29,7 +34,18 @@ defmodule Numy.MixProject do
       deps: deps(),
       # Add our native compilation step to the list of compilers,
       # see https://hexdocs.pm/mix/1.0.5/Mix.Tasks.Compile.html
-      compilers: [:numy] ++ Mix.compilers
+      compilers: [:numy] ++ Mix.compilers,
+
+
+      # Docs
+      name: "Numy",
+      source_url: "https://github.com/curoles/elixir-numy",
+      #homepage_url: "http://YOUR_PROJECT_HOMEPAGE",
+      docs: [
+        #main: "MyApp", # The main page in the docs
+        #logo: "path/to/logo.png",
+        extras: ["README.md"]
+      ]
     ]
   end
 

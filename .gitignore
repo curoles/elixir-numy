@@ -25,3 +25,6 @@ numy-*.tar
 # Ignore ElixirLS VS Code extention working directory.
 /.elixir_ls
 
+# Ignore directory with the compiled shared library with C functions.
+/priv
+
