@@ -131,7 +131,10 @@ defmodule Numy.Vector do
     Enum.zip(vec1,vec2) |> Enum.map(fn {a,b} -> a + b end)
   end
   def add(vec1, vec2) do
-    Enum.zip(vec1,vec2) |> Flow.from_enumerable |> Flow.map(fn {a,b} -> a + b end)
+    Enum.zip(vec1,vec2)
+    |> Flow.from_enumerable
+    |> Flow.map(fn {a,b} -> a + b end)
+    |> Enum.to_list
   end
 
   @spec subtract([float], [float]) :: [float]
@@ -140,7 +143,10 @@ defmodule Numy.Vector do
     Enum.zip(vec1,vec2) |> Enum.map(fn {a,b} -> a - b end)
   end
   def subtract(vec1, vec2) do
-    Enum.zip(vec1,vec2) |> Flow.from_enumerable |> Flow.map(fn {a,b} -> a - b end)
+    Enum.zip(vec1,vec2)
+    |> Flow.from_enumerable
+    |> Flow.map(fn {a,b} -> a - b end)
+    |> Enum.to_list
   end
 
   @spec element_multiply([float], [float]) :: [float]
@@ -149,7 +155,23 @@ defmodule Numy.Vector do
     Enum.zip(vec1,vec2) |> Enum.map(fn {a,b} -> a - b end)
   end
   def element_multiply(vec1, vec2) do
-    Enum.zip(vec1,vec2) |> Flow.from_enumerable |> Flow.map(fn {a,b} -> a * b end)
+    Enum.zip(vec1,vec2)
+    |> Flow.from_enumerable
+    |> Flow.map(fn {a,b} -> a * b end)
+    |> Enum.to_list
   end
 
+  @spec mean_sq_err([float], [float]) :: float
+  def mean_sq_err(vec1, vec2) do
+    sum_sq_err = Enum.zip(vec1,vec2)
+    |> Flow.from_enumerable
+    |> Flow.map(fn {a,b} -> (a - b)*(a - b) end)
+    #|> Flow.reduce( TODO figure out how reduce works
+    #  fn -> %{} end,
+    #  fn x, acc -> acc + x end
+    #  )
+    |> Enum.sum
+
+    sum_sq_err / length(vec1)
+  end
 end

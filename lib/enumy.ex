@@ -75,12 +75,16 @@ defmodule Numy.Enumy do
 
   ## Benchmark
 
-      iex(4)> Benchee.run(%{"1" => fn -> Numy.Enumy.dot_product(Enum.to_list(1..99_000), Enum.to_list(1..99_000)) end, \\
-      ...(4)> "2" => fn -> Enum.zip(Enum.to_list(1..99_000), Enum.to_list(1..99_000)) |> Enum.map(fn {ea, eb} -> ea * eb end) \\
-      ...(4)> |> Enum.reduce(&Kernel.+/2) end})
-      Name           ips        average  deviation         median         99th %
-      1            61.69       16.21 ms     ±7.81%       16.55 ms       20.71 ms
-      2             2.81      355.51 ms     ±1.31%      355.07 ms      366.72 ms
+      iex(2)> import Numy.Enumy
+      iex(3)> vec = Enum.to_list(1..999_000)
+      iex(4)> Benchee.run(%{"1" => fn -> dot_product(vec,vec) end,
+      ...(4)> "2" => fn -> Enum.zip(vec,vec) |> Enum.map(fn {a,b} -> a * b end) |> Enum.reduce(&Kernel.+/2) end,
+      ...(4)> "3" => fn -> Enum.zip(vec,vec) |> Flow.from_enumerable |>
+              Flow.map(fn {a,b} -> a * b end) |> Flow.reduce(fn -> %{} end, &Kernel.+/2) end})
+      Comparison:
+      1            22.40
+      3            16.72 - 1.34x slower +15.18 ms      FIXME wrong code!!!
+      2             0.28 - 79.02x slower +3483.45 ms
   """
   @spec dot_product([number], [number]) :: number
   def dot_product(vec1, _vec2) when vec1 == [], do: 0
