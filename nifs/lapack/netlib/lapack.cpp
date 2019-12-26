@@ -8,8 +8,13 @@
  *
  * Note: ERL_NIF_TERM is a “wrapper” type that represents all Erlang types
  *       (like binary, list, tuple, and so on) in C.
+ *
+ * To get LAPACK headers:
+ *
+ * - Ubuntu: sudo apt install liblapacke-dev
  */
 #include <erl_nif.h>
+#include <lapacke.h>
 
 #define UNUSED __attribute__((unused))
 #define NUMY_ERL_FUN static ERL_NIF_TERM

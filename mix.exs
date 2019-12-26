@@ -46,7 +46,11 @@ defmodule Numy.MixProject do
       docs: [
         #main: "MyApp", # The main page in the docs
         #logo: "path/to/logo.png",
-        extras: ["README.md"]
+        authors: ["Igor Lesik"],
+        extras: [
+          "README.md",
+          "nifs/lapack/netlib/README.md": [filename: "nifs_lapack_README"]
+        ]
       ]
     ]
   end

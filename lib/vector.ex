@@ -174,4 +174,9 @@ defmodule Numy.Vector do
 
     sum_sq_err / length(vec1)
   end
+
+  @spec root_mean_sq_err([float], [float]) :: float
+  def root_mean_sq_err(vec1, vec2) do
+    :math.sqrt(mean_sq_err(vec1,vec2))
+  end
 end
