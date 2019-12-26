@@ -75,8 +75,8 @@ defmodule Numy.Enumy do
 
   ## Benchmark
 
-      iex(4)> Benchee.run(%{"1" => fn -> Numy.Enumy.dot_product(Enum.to_list(1..99_000), Enum.to_list(1..99_000)) end, \
-      ...(4)> "2" => fn -> Enum.zip(Enum.to_list(1..99_000), Enum.to_list(1..99_000)) |> Enum.map(fn {ea, eb} -> ea * eb end) \
+      iex(4)> Benchee.run(%{"1" => fn -> Numy.Enumy.dot_product(Enum.to_list(1..99_000), Enum.to_list(1..99_000)) end, \\
+      ...(4)> "2" => fn -> Enum.zip(Enum.to_list(1..99_000), Enum.to_list(1..99_000)) |> Enum.map(fn {ea, eb} -> ea * eb end) \\
       ...(4)> |> Enum.reduce(&Kernel.+/2) end})
       Name           ips        average  deviation         median         99th %
       1            61.69       16.21 ms     ±7.81%       16.55 ms       20.71 ms

@@ -1,18 +1,9 @@
 defmodule Numy do
   @moduledoc """
-  Documentation for Numy.
+  Numy is:
+
+  - NIF wrapper around LAPACK.
+  - Collection of basic operations on vectors and matrices.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Numy.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end

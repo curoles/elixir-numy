@@ -25,10 +25,10 @@ double dot(const double a[], const double b[], unsigned length)
  * 
  * @return true on success
  */
-bool fill_vector(ErlNifEnv* env, ERL_NIF_TERM listTerm, double outVector[], unsigned length) 
+bool make_vector_from_list(ErlNifEnv* env, ERL_NIF_TERM list, double outVector[], unsigned length) 
 {
     double headVal;
-    ERL_NIF_TERM head, tail, currentList = listTerm;
+    ERL_NIF_TERM head, tail, currentList = list;
 
     for (unsigned int i = 0; i < length; ++i) 
     {
@@ -61,16 +61,24 @@ NUMY_ERL_FUN nif_dot_product(ErlNifEnv* env, int /*argc*/, const ERL_NIF_TERM ar
         return enif_make_badarg(env);
     }
 
-    double vector1[10];
-    double vector2[10];
+    double* vector1 = new double[length];
+    double* vector2 = new double[length];
 
-    if (!fill_vector(env, argv[0], vector1, length) or
-        !fill_vector(env, argv[1], vector2, length))
+    ERL_NIF_TERM retVal;
+
+    if (!make_vector_from_list(env, argv[0], vector1, length) or
+        !make_vector_from_list(env, argv[1], vector2, length))
     {
-        return enif_make_badarg(env);
+        retVal = enif_make_badarg(env);
+    }
+    else {
+        retVal = enif_make_double(env, dot(vector1, vector2, length));
     }
 
-    return enif_make_double(env, dot(vector1, vector2, length));
+    delete[] vector1;
+    delete[] vector2;
+
+    return retVal;
 }
 
 static ErlNifFunc nif_funcs[] = {
