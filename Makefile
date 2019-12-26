@@ -32,14 +32,21 @@ else
 CFLAGS += -O3 -DNDEBUG
 endif
 
-NUMY_LIB := priv/libnumy_${MIX_ENV}.so
+NUMY_VECTOR_LIB := priv/libnumy_vector_${MIX_ENV}.so
+NUMY_LAPACK_LIB := priv/libnumy_lapack_${MIX_ENV}.so
 
 .PHONY: all
-all: ${NUMY_LIB}
+all: ${NUMY_VECTOR_LIB} ${NUMY_LAPACK_LIB}
 
-NUMY_SRC := ./nifs/lapack/netlib/lapack.cpp
+NUMY_VECTOR_SRC := ./nifs/vector.cpp
+NUMY_LAPACK_SRC := ./nifs/lapack/netlib/lapack.cpp
 
-${NUMY_LIB}: ${NUMY_SRC}
+${NUMY_LAPACK_LIB}: ${NUMY_LAPACK_SRC}
 	@mkdir -p ./priv
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
-	@ln -srf $@ priv/libnumy.so
+	@ln -srf $@ priv/libnumy_lapack.so
+
+${NUMY_VECTOR_LIB}: ${NUMY_VECTOR_SRC}
+	@mkdir -p ./priv
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	@ln -srf $@ priv/libnumy_vector.so

@@ -24,7 +24,7 @@ NUMY_ERL_FUN numy_version(ErlNifEnv* env, int /*argc*/, const ERL_NIF_TERM argv[
 
 static ErlNifFunc nif_funcs[] = {
     // Erlang function name  arity      function   flags
-    {        "numy_version",     0, numy_version,    0}
+    {        "numy_version",     0, numy_version,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.
