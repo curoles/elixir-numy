@@ -7,7 +7,7 @@ $(error MIX_ENV is not set, check Mix.Tasks.Compile.Numy.run())
 endif
 
 ifndef NUMY_VERSION
-$(error NUMY_VERSION is not set
+$(error NUMY_VERSION is not set)
 endif
 
 ifneq (${MIX_ENV},prod) # MIX_ENV=prod | dev | test
@@ -32,6 +32,8 @@ else
 CFLAGS += -O3 -DNDEBUG
 endif
 
+NETLIB_LAPACK_STATIC_LIBS := -l:liblapacke.a -l:liblapack.a -l:libblas.a
+
 NUMY_VECTOR_LIB := priv/libnumy_vector_${MIX_ENV}.so
 NUMY_LAPACK_LIB := priv/libnumy_lapack_${MIX_ENV}.so
 
@@ -43,10 +45,15 @@ NUMY_LAPACK_SRC := ./nifs/lapack/netlib/lapack.cpp
 
 ${NUMY_LAPACK_LIB}: ${NUMY_LAPACK_SRC}
 	@mkdir -p ./priv
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ ${NETLIB_LAPACK_STATIC_LIBS}
 	@ln -srf $@ priv/libnumy_lapack.so
 
 ${NUMY_VECTOR_LIB}: ${NUMY_VECTOR_SRC}
 	@mkdir -p ./priv
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 	@ln -srf $@ priv/libnumy_vector.so
+
+.PHONY: clean
+clean:
+	rm -f ${NUMY_LAPACK_LIB}
+	rm -f ${NUMY_VECTOR_LIB}

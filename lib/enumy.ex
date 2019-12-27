@@ -73,7 +73,7 @@ defmodule Numy.Enumy do
       iex> dot_product([1,2,3],[2,3,0])
       8
 
-  ## Benchmark
+  ## Benchmarks
 
       iex(1)> fn1 = fn(v1,v2) -> Numy.Enumy.dot_product(v1,v2) end
       iex(2)> fn2 = fn(v1,v2) -> Enum.zip(v1,v2) |> Enum.map(fn {a,b} -> a * b end) |>

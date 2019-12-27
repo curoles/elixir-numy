@@ -15,6 +15,7 @@
  */
 #include <erl_nif.h>
 #include <lapacke.h>
+#include <cblas.h> 
 
 #define UNUSED __attribute__((unused))
 #define NUMY_ERL_FUN static ERL_NIF_TERM
@@ -25,6 +26,22 @@
 NUMY_ERL_FUN nif_numy_version(ErlNifEnv* env, int /*argc*/, const ERL_NIF_TERM argv[] UNUSED)
 {
     return enif_make_string(env, XSTR(NUMY_VERSION), ERL_NIF_LATIN1);
+}
+
+//https://en.wikipedia.org/wiki/Givens_rotation
+//http://www.netlib.org/lapack/explore-html/df/d28/group__single__blas__level1_ga2f65d66137ddaeb7ae93fcc4902de3fc.html#ga2f65d66137ddaeb7ae93fcc4902de3fc
+NUMY_ERL_FUN numy_cblas_drotg(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[] UNUSED)
+{
+    double a,b,c,s;
+    if (argc != 2 or !enif_get_double(env, argv[0], &a) or !enif_get_double(env, argv[1], &b)) {
+        return enif_make_badarg(env);
+    }
+
+    cblas_drotg(&a, &b, &c, &s);
+
+    return enif_make_tuple4(env,
+        enif_make_double(env, a), enif_make_double(env, b),
+        enif_make_double(env, c), enif_make_double(env, s));
 }
 
 static int
@@ -49,7 +66,8 @@ unload_nif(ErlNifEnv* /*env*/, void* /*priv*/) {
 
 static ErlNifFunc nif_funcs[] = {
     // Erlang function name  arity          function    flags
-    {    "nif_numy_version",     0, nif_numy_version,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {    "nif_numy_version",     0, nif_numy_version,   0/*ERL_NIF_DIRTY_JOB_CPU_BOUND*/},
+    {         "cblas_drotg",     2, numy_cblas_drotg,   0/*ERL_NIF_DIRTY_JOB_CPU_BOUND*/},
 };
 
 // Performs all the magic needed to actually hook things up.

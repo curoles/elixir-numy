@@ -11,7 +11,21 @@ defmodule Numy.NIF.Lapack do
   def load_nifs do
     mix_app = Mix.Project.config[:app]
     path = :filename.join(:code.priv_dir(mix_app), 'libnumy_lapack')
-    :erlang.load_nif(path, 0)
+    load_res = :erlang.load_nif(path, 0)
+    case load_res do
+      :ok ->
+        check_nif_version()
+      {_error, {_reason, err_msg}} ->
+        IO.puts "can't load numy_lapack.so: " <> err_msg
+        :abort
+      {_,e} ->
+        IO.inspect e
+        :abort
+    end
+
+  end
+
+  defp check_nif_version() do
     try do
       if "#{nif_numy_version()}" != "#{Mix.Project.config[:version]}" do
         raise "NIF Numy version is #{nif_numy_version()}, " <>
@@ -36,6 +50,23 @@ defmodule Numy.NIF.Lapack do
   """
   @spec nif_numy_version() :: String.t()
   def nif_numy_version() do
-    raise "NIF numy_version/0 not implemented"
+    raise "nif_numy_version/0 not implemented"
   end
+
+  @spec cblas_drotg(float, float) :: {float,float,float,float}
+  def cblas_drotg(_a,_b) do
+    raise "cblas_drotg/2 not implemented"
+  end
+
+  @spec generate_plane_rotation(number, number) :: :error | {float,float,float,float}
+  def generate_plane_rotation(a, b) when is_number(a) and is_number(b) do
+    try do
+      cblas_drotg(a/1, b/1)
+    rescue
+      _ ->
+      :error
+    end
+  end
+
+
 end
