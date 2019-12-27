@@ -1,6 +1,6 @@
 /**
- * @file      Typical vector operations.
- * @brief
+ * @file
+ * @brief     Typical vector operations.
  * @author    Igor Lesik 2019
  * @copyright Igor Lesik 2019
  *
