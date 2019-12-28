@@ -6,6 +6,7 @@
  * @copyright Igor Lesik 2019
  *
  */
+//#include <cstdio>
 #include <erl_nif.h>
 
 #include "tensor.hpp"
@@ -108,8 +109,42 @@ unload_nif(ErlNifEnv* /*env*/, void* priv)
     }
 }
 
+static
+bool tensor_construct(numy::Tensor* tensor,
+    ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) { return false; }
+
+    ERL_NIF_TERM map = argv[0];
+
+    if (!enif_is_map(env, map)) { return false; }
+
+    size_t mapSize = 0;
+    if (!enif_get_map_size(env, map, &mapSize)) { return false; }
+
+    if (mapSize == 0) { return false; }
+
+    ERL_NIF_TERM atomShape;
+    if (!enif_make_existing_atom(env, "shape", &atomShape, ERL_NIF_LATIN1)) { return false; }
+
+    ERL_NIF_TERM termShape;
+    if (!enif_get_map_value(env, map, atomShape, &termShape)) { return false; }
+
+    if (!enif_is_list(env, termShape)) { return false; }
+
+    unsigned lenShape = 0;
+    if (!enif_get_list_length(env, termShape, &lenShape)) { return false; }
+
+    if (lenShape == 0) { return false; }
+
+    tensor->nrDims = lenShape;
+
+
+    return true;
+}
+
 static ERL_NIF_TERM
-tensor_create(ErlNifEnv* env, int /*argc*/, const ERL_NIF_TERM argv[] UNUSED)
+tensor_create(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     using namespace numy::tnsr;
 
@@ -126,6 +161,11 @@ tensor_create(ErlNifEnv* env, int /*argc*/, const ERL_NIF_TERM argv[] UNUSED)
     ERL_NIF_TERM nifTensor = enif_make_resource(env, tensor);
 
     enif_release_resource(tensor);
+
+    if (!tensor_construct(tensor, env, argc, argv)) {
+        // enif_fprintf(stderr, "failed to construct Tensor\n");
+        return enif_make_badarg(env);
+    }
 
     return nifTensor;
 }
@@ -153,7 +193,7 @@ tensor_get_nr_dimensions(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 }
 
 static ErlNifFunc nif_funcs[] = {
-    {           "create", 0,              tensor_create, 0/*ERL_NIF_DIRTY_JOB_CPU_BOUND*/},
+    {           "create", 1,              tensor_create, 0/*ERL_NIF_DIRTY_JOB_CPU_BOUND*/},
     {    "nr_dimensions", 1,   tensor_get_nr_dimensions, 0}
 };
 

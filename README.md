@@ -1,6 +1,37 @@
 # Numy
 
-**TODO: Add description**
+**Numy** is scientific compiting library.
+
+**Numy** contains modules for:
+
+- Liner Algebra. **Numy** has NIF wrapper around native LAPACK library.
+- more
+
+## Table of contents
+
+- [Installation](#installation)
+- [Linear Algebra with LAPACK](#linear-algebra-with-lapack)
+  * [BLAS](#blas)
+    + [Level 1](#blas-level-1)
+
+## Installation
+
+## Linear Algebra with LAPACK
+
+### BLAS
+
+#### BLAS Level 1
+
+|          Wrapper function       |       Direct function      |        Description               |
+| ------------------------------: | -------------------------: | ---------------------------------|
+|         generate_plane_rotation |                 cblas_drotg| |
+| | | |
+
+#### BLAS Level 2
+
+#### BLAS Level 3
+
+### LAPACK
 
 <!--
 ## Installation

@@ -32,6 +32,7 @@ defmodule Numy.Vector do
     Numy.Enumy.all_to_float(list)
   end
 
+  # hmm, length() calculated by traversing, maybe having this guard is not a good idea
   defguard is_two_vectors_equal_length(vector1, vector2) when
     is_list(vector1) and is_list(vector2) and length(vector1) == length(vector2)
 
@@ -104,19 +105,22 @@ defmodule Numy.Vector do
       ...(7)> "101" => fn -> scale(vec101, 0.5) end,
       ...(7)> "999" => fn -> scale(vec999, 0.5) end})
       Name           ips        average  deviation         median         99th %
-      1          18.09 K       55.27 μs    ±22.13%       52.30 μs       87.83 μs
-      10          1.57 K      635.89 μs     ±4.67%      624.25 μs      742.20 μs
-      99         0.109 K     9188.89 μs    ±10.06%     8978.82 μs    13769.76 μs
-      101 FLOW    2.10 K      475.69 μs    ±12.76%      460.00 μs      615.74 μs
-      999        0.176 K     5686.61 μs     ±2.77%     5667.13 μs     6261.60 μs
+      1         18824.26      0.0531 ms    ±18.54%      0.0504 ms      0.0785 ms
+      10         1612.85        0.62 ms     ±5.92%        0.61 ms        0.75 ms
+      99          118.20        8.46 ms    ±10.34%        8.30 ms       13.34 ms
+      101          16.46       60.75 ms     ±9.79%       59.47 ms       80.31 ms
+      999           1.68      593.90 ms     ±8.80%      578.90 ms      704.34 ms
   """
   @spec scale([float], float) :: [float]
-  def scale(vector, factor) when length(vector) < 100_000 do
+  def scale(vector, factor) do #when length(vector) < 100_000 do
     Enum.map(vector, fn x -> x * factor end)
   end
-  def scale(vector, factor) do
-    vector |> Flow.from_enumerable() |> Flow.map(fn x -> x * factor end)
-  end
+  #def scale(vector, factor) do
+  #  vector
+  #  |> Flow.from_enumerable()
+  #  |> Flow.map(fn x -> x * factor end)
+  #  |> Enum.to_list
+  #end
 
   @doc """
 
