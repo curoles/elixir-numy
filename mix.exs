@@ -48,7 +48,7 @@ defmodule Numy.MixProject do
         #logo: "path/to/logo.png",
         authors: ["Igor Lesik"],
         extras: [
-          "README.md",
+          "README.md", "RELEASE.md",
           "nifs/lapack/netlib/README.md": [filename: "nifs_lapack_README"]
         ]
       ]

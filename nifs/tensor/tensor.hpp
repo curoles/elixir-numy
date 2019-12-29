@@ -8,12 +8,28 @@
  */
 #pragma once
 
+#include <cstdint>
+
 namespace numy {
 
 struct Tensor
 {
-    unsigned nrDims; ///< number of dimentions
+    static unsigned constexpr MAX_DIMS = 100;
+    static uint64_t constexpr MAGIC = 0xbadc01dc0ffe;
 
+    uint64_t magic = MAGIC; ///< to check we are actually dealing with Tensor
+
+    unsigned nrDims; ///< number of dimensions
+    unsigned shape[MAX_DIMS]; ///< size of each dimension 
+
+    void* data;
+
+    unsigned nrElements;
+    unsigned dataSize; /// size of data in bytes
+
+    inline bool isValid() const {
+        return nrDims > 0 and nrDims < MAX_DIMS and data != nullptr;
+    }
 };
 
 } // end of namespace numy

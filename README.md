@@ -1,10 +1,10 @@
 # Numy
 
-**Numy** is scientific compiting library.
+**Numy** is a library used for scientific and technical compiting.
 
 **Numy** contains modules for:
 
-- Liner Algebra. **Numy** has NIF wrapper around native LAPACK library.
+- Linear Algebra. **Numy** has NIF wrapper around native LAPACK library.
 - more
 
 ## Table of contents

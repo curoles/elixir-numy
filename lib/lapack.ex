@@ -58,6 +58,11 @@ defmodule Numy.NIF.Lapack do
     raise "cblas_drotg/2 not implemented"
   end
 
+  @doc """
+
+      res = generate_plane_rotation(1,2)
+      Keyword.fetch(res, :r | :z | :c | :s)
+  """
   @spec generate_plane_rotation(number, number) :: :error | Keyword.t()
   def generate_plane_rotation(a, b) when is_number(a) and is_number(b) do
     try do

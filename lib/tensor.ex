@@ -44,6 +44,25 @@ defmodule Numy.Tensor do
     raise "create/1 not implemented"
   end
 
+  def new(tensor_struct) when is_map(tensor_struct) do
+    try do
+      nif_resource = create(tensor_struct)
+      %{tensor_struct | nif_resource: nif_resource}
+    rescue
+      _ -> nil
+    end
+  end
+
+  def new(shape) do
+    try do
+      tensor_struct = %Numy.Tensor{shape: shape}
+      nif_resource = create(tensor_struct)
+      %{tensor_struct | nif_resource: nif_resource}
+    rescue
+      _ -> nil
+    end
+  end
+
   @doc """
 
   ## Examples
@@ -60,4 +79,21 @@ defmodule Numy.Tensor do
     raise "nr_dimentions/1 not implemented"
   end
 
+end
+
+# Tz protocol implementation
+#
+defimpl Numy.Tz, for: Numy.Tensor do
+
+  def ndim(tensor) do
+    try do
+      Numy.Tensor.nr_dimensions(tensor.nif_resource)
+    rescue
+      _ -> 0
+    end
+  end
+
+  #def nelm(_tensor) do
+  #  1 # TODO Numy.Tensor.nr_elements(tensor)
+  #end
 end

@@ -7,6 +7,7 @@
  *
  */
 //#include <cstdio>
+//#include <cassert>
 #include <erl_nif.h>
 
 #include "tensor.hpp"
@@ -30,9 +31,19 @@ public:
     ResType open(ErlNifEnv* env);
 
     static
-    void dtor(ErlNifEnv* /*env*/, void* /*obj*/)
+    void dtor(ErlNifEnv* env, void* obj)
     {
-
+        numy::Tensor* tensor = (numy::Tensor*) obj;
+        //assert(tensor->magic == numy::Tensor::MAGIC);
+        if (tensor->magic != numy::Tensor::MAGIC) {
+            enif_raise_exception(env,
+                enif_make_string(env, "Tensor bad magic", ERL_NIF_LATIN1));
+        }
+        else {
+            if (tensor->data != nullptr) {
+                enif_free(tensor->data);
+            }
+        }
     }
 
     numy::Tensor* allocate() {
@@ -113,6 +124,11 @@ static
 bool tensor_construct(numy::Tensor* tensor,
     ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
+    // Initialize fields
+    tensor->magic  = numy::Tensor::MAGIC;
+    tensor->nrDims = 0;
+    tensor->data   = nullptr;
+
     if (argc != 1) { return false; }
 
     ERL_NIF_TERM map = argv[0];
@@ -137,8 +153,32 @@ bool tensor_construct(numy::Tensor* tensor,
 
     if (lenShape == 0) { return false; }
 
+    tensor->nrElements = 1;
+
+    int headVal;
+    ERL_NIF_TERM head, tail, currentList = termShape;
+
+    for (unsigned int i = 0; i < lenShape; ++i) 
+    {
+        if (!enif_get_list_cell(env, currentList, &head, &tail))  {
+            return false;
+        }
+        currentList = tail;
+        if (!enif_get_int(env, head, &headVal)) {
+            return false;
+        }
+        if (headVal == 0 or headVal < 0) {
+            return false;
+        }
+        tensor->shape[i] = headVal;
+        tensor->nrElements *= tensor->shape[i];
+    }
+
     tensor->nrDims = lenShape;
 
+    unsigned sizeOfDataType = sizeof(double);
+    tensor->dataSize = tensor->nrElements * sizeOfDataType;
+    tensor->data = enif_alloc(tensor->dataSize);
 
     return true;
 }
