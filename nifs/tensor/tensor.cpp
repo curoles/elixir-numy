@@ -17,7 +17,7 @@
 namespace numy::tnsr {
 
 /**
- * NIFResource manages Tensor NIF resorces. 
+ * NIFResource manages Tensor NIF resources. 
  */
 class NIFResource
 {

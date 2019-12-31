@@ -18,7 +18,7 @@ ERLANG_INC := $(shell erl -eval 'io:format("~s", [lists:concat([code:root_dir(),
 
 # CFLAGS for both Debug and Release
 CFLAGS += -Werror -Wfatal-errors -Wall -Wextra
-CFLAGS += -I$(ERLANG_INC)
+CFLAGS += -I$(ERLANG_INC) -I./nifs
 CFLAGS += -fpic -std=c++17
 CFLAGS += -fno-rtti -fno-exceptions
 CFLAGS += -DNUMY_VERSION=${NUMY_VERSION}

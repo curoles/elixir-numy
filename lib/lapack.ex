@@ -1,7 +1,23 @@
-defmodule Numy.NIF.Lapack do
+defmodule Numy.Lapack do
   @moduledoc """
-  todo
+  NIF wrapper around LAPACK.
   """
+
+  @opaque tensor_res :: binary
+
+  @doc """
+  Numy.Lapack structure defines a tensor.
+  Having tensor as NIF resource helps to bring computation to the data.
+
+      iex> tensor = %Numy.Lapack{shape: [3,2]}
+  """
+  @derive {Inspect, only: [:shape]}
+  @enforce_keys [:shape]
+  defstruct [
+    :nif_resource, # pointer to NIF resource
+    :shape         # shape of tensor as list, [3, 2] - 2 rows and 3 columns
+  ]
+
 
   @on_load :load_nifs
 
@@ -53,8 +69,71 @@ defmodule Numy.NIF.Lapack do
     raise "nif_numy_version/0 not implemented"
   end
 
-  @spec cblas_drotg(float, float) :: {float,float,float,float}
-  def cblas_drotg(_a,_b) do
+  @doc """
+  Create new tensor NIF resource.
+  """
+  @spec create_tensor(%Numy.Lapack{}) :: tensor_res
+  def create_tensor(_tensor_struct) do
+    raise "tensor_create/1 not implemented"
+  end
+
+  def new_tensor(tensor_struct) when is_map(tensor_struct) do
+    try do
+      nif_resource = create_tensor(tensor_struct)
+      %{tensor_struct | nif_resource: nif_resource}
+    rescue
+      _ -> nil
+    end
+  end
+
+  def new_tensor(shape) do
+    try do
+      tensor_struct = %Numy.Lapack{shape: shape}
+      nif_resource = create_tensor(tensor_struct)
+      %{tensor_struct | nif_resource: nif_resource}
+    rescue
+      _ -> nil
+    end
+  end
+
+  def fill_tensor(_tensor, _fill_val) do
+    raise "fill/2 not implemented"
+  end
+
+  @doc """
+  Fill tensor with a scalar.
+
+  ## Examples
+
+      iex(1)> tensor = Numy.Lapack.new_tensor([2,3])
+      iex(2)> Numy.Lapack.fill(tensor, 3.14)
+      iex(3)> Numy.Lapack.data(tensor)
+      [3.14, 3.14, 3.14, 3.14, 3.14, 3.14]
+  """
+  def fill(tensor, val) when is_map(tensor) do
+    try do
+      fill_tensor(tensor.nif_resource, val)
+    rescue
+      _ ->
+      :error
+    end
+  end
+
+  def tensor_data(_tensor) do
+    raise "tensor_data/1 not implemented"
+  end
+
+  def data(tensor) when is_map(tensor) do
+    try do
+      tensor_data(tensor.nif_resource)
+    rescue
+      _ ->
+      :error
+    end
+  end
+
+  @spec blas_drotg(float, float) :: {float,float,float,float}
+  def blas_drotg(_a,_b) do
     raise "cblas_drotg/2 not implemented"
   end
 
@@ -66,7 +145,7 @@ defmodule Numy.NIF.Lapack do
   @spec generate_plane_rotation(number, number) :: :error | Keyword.t()
   def generate_plane_rotation(a, b) when is_number(a) and is_number(b) do
     try do
-      {r, z, c, s} = cblas_drotg(a/1, b/1)
+      {r, z, c, s} = blas_drotg(a/1, b/1)
       [r: r, z: z, c: c, s: s]
     rescue
       _ ->
@@ -74,5 +153,9 @@ defmodule Numy.NIF.Lapack do
     end
   end
 
+  @spec blas_dcopy(number, tensor_res, number, tensor_res, number) :: number
+  def blas_dcopy(_num, _src, _src_step, _dst, _dst_step) do
+    raise "blas_dcopy/5 not implemented"
+  end
 
 end
