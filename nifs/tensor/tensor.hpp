@@ -30,6 +30,14 @@ struct Tensor
     inline bool isValid() const {
         return nrDims > 0 and nrDims < MAX_DIMS and data != nullptr;
     }
+
+    inline unsigned nr_cols() const {
+        return shape[0];
+    }
+
+    inline unsigned nr_rows() const {
+        return (nrDims == 1)? 1u : shape[1];
+    }
 };
 
 } // end of namespace numy

@@ -171,4 +171,24 @@ defmodule Numy.Lapack do
     raise "blas_dcopy/5 not implemented"
   end
 
+
+  def lapack_dgels(_tensor_a, _tensor_b) do
+    raise "lapack_dgels/2 not implemented"
+  end
+
+  def solve_lls(a, b) when is_map(a) and is_map(b) do
+    cond do
+      length(a.shape) != 2 ->
+        :error
+      length(b.shape) != 2 ->
+        :error
+      true ->
+        try do
+          lapack_dgels(a.nif_resource, b.nif_resource)
+        rescue
+          _ ->
+            :error
+        end
+    end
+  end
 end

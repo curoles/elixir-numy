@@ -282,7 +282,7 @@ NUMY_ERL_FUN tensor_data(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     const numy::Tensor* tensor = getTensor(env, argv[0]);
 
-    if (tensor == nullptr or tensor->magic != numy::Tensor::MAGIC) {
+    if (tensor == nullptr or tensor->magic != numy::Tensor::MAGIC or !tensor->isValid()) {
 	    return enif_make_badarg(env);
     }
 
@@ -295,7 +295,7 @@ NUMY_ERL_FUN tensor_data(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     ERL_NIF_TERM list, el;
     list = enif_make_list(env, 0);
 
-    for (unsigned i = 0; i < tensor->nrElements; ++i) {
+    for (int i = tensor->nrElements - 1; i >= 0; --i) {
         el = enif_make_double(env, data[i]);
         list = enif_make_list_cell(env, el, list);
     }
@@ -383,14 +383,55 @@ NUMY_ERL_FUN numy_blas_dcopy(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
     return getOkAtom(env);
 }
 
+//http://www.netlib.org/lapack/explore-html/d7/d3b/group__double_g_esolve_ga225c8efde208eaf246882df48e590eac.html#ga225c8efde208eaf246882df48e590eac
+NUMY_ERL_FUN numy_lapack_dgels(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensorA = getTensor(env, argv[0]);
+    const numy::Tensor* tensorB = getTensor(env, argv[1]);
+
+    if (tensorA == nullptr or tensorA->magic != numy::Tensor::MAGIC or !tensorA->isValid() or
+        tensorB == nullptr or tensorB->magic != numy::Tensor::MAGIC or !tensorB->isValid())
+    {
+	    return enif_make_badarg(env);
+    }
+
+    double* a = (double*) tensorA->data;
+    double* b = (double*) tensorB->data;
+
+    int aNrRows = tensorA->nr_rows();
+    int aNrCols = tensorA->nr_cols();
+    int nrhs    = tensorB->nr_cols();
+    int lda     = aNrCols;
+    int ldb     = nrhs;
+
+    lapack_int res = LAPACKE_dgels(
+        LAPACK_ROW_MAJOR,  // matrix_layout
+        'N',      // trans: 'N' => A, 'T' => A^T
+        aNrRows,  // M - The number of rows of the matrix A
+        aNrCols,  // N - The number of columns of the matrix A
+        nrhs,     // the number of columns of the matrices B and X
+        a,        // On entry, the M-by-N matrix A. On exit, details of its QR/LQ factorization
+        lda,      // The leading dimension of the array A.  LDA >= max(1,M).
+        b,        // B is M-by-NRHS. On exit, solution X.
+        ldb       // The leading dimension of the array B. LDB >= MAX(1,M,N).
+    );
+
+    return enif_make_int(env, res);
+}
+
 static ErlNifFunc nif_funcs[] = {
-    {       "create_tensor",     1,    tensor_create,   0},
-    {    "nif_numy_version",     0, nif_numy_version,   0},
-    {         "fill_tensor",     2,      tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {         "tensor_data",     1,      tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {       "tensor_assign",     2,    tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {          "blas_drotg",     2,  numy_blas_drotg,   0},
-    {          "blas_dcopy",     5,  numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {       "create_tensor",     1,         tensor_create,   0},
+    {    "nif_numy_version",     0,      nif_numy_version,   0},
+    {         "fill_tensor",     2,           tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {         "tensor_data",     1,           tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {       "tensor_assign",     2,         tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "blas_drotg",     2,       numy_blas_drotg,   0},
+    {          "blas_dcopy",     5,       numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {        "lapack_dgels",     2,     numy_lapack_dgels,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.

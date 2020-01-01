@@ -16,4 +16,13 @@ defmodule NumyTest do
     assert close?(-0.01, -0.01) == true and close?(-0.01, -0.02) == false and close?(-0.01, 0.01) == false
     assert close?(-0.01, -0.01000001, 0.000000001) == false and close?(-0.01, -0.01000001, 0.0001) == true
   end
+
+  test "lapack LLS QR" do
+    a = Numy.Lapack.new_tensor([3,5])
+    Numy.Lapack.assign(a, [1,1,1,2,3,4,3,5,2,4,2,5,5,4,3])
+    b = Numy.Lapack.new_tensor([2,5])
+    Numy.Lapack.assign(b, [-10,-3,12,14,14,12,16,16,18,16])
+    Numy.Lapack.solve_lls(a,b)
+    #check [2,1],[1,1],[1,2] Numy.Lapack.data(b)
+  end
 end

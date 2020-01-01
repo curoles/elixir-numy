@@ -32,7 +32,7 @@ else
 CFLAGS += -O3 -DNDEBUG
 endif
 
-NETLIB_LAPACK_STATIC_LIBS := -l:liblapacke.a -l:liblapack.a -l:libblas.a
+NETLIB_LAPACK_STATIC_LIBS := -l:liblapacke.a -l:liblapack.a -l:libblas.a -lgfortran
 
 NUMY_VECTOR_LIB := priv/libnumy_vector_${MIX_ENV}.so
 NUMY_TENSOR_LIB := priv/libnumy_tensor_${MIX_ENV}.so
