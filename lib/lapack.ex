@@ -132,6 +132,19 @@ defmodule Numy.Lapack do
     end
   end
 
+  def tensor_assign(_tensor, _list) do
+    raise "tensor_assign/2 not implemented"
+  end
+
+  def assign(tensor, list) when is_map(tensor) and is_list(list) do
+    try do
+      tensor_assign(tensor.nif_resource, List.flatten(list))
+    rescue
+      _ ->
+      :error
+    end
+  end
+
   @spec blas_drotg(float, float) :: {float,float,float,float}
   def blas_drotg(_a,_b) do
     raise "cblas_drotg/2 not implemented"

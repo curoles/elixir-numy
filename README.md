@@ -1,24 +1,39 @@
 # Numy
 
-**Numy** is a library used for scientific and technical compiting.
+**Numy** is a library to be used for scientific and technical computing.
 
 **Numy** contains modules for:
 
 - Linear Algebra. **Numy** has NIF wrapper around native LAPACK library.
-- more
+- more not yet
 
 ## Table of contents
 
+- [Example](#example)
+- [Comparison](#comparison)
 - [Installation](#installation)
 - [Linear Algebra with LAPACK](#linear-algebra-with-lapack)
   * [BLAS](#blas)
-    + [Level 1](#blas-level-1)
+
+## Example
+
+See this example in LAPACK [reference documentation](http://www.netlib.org/lapack/explore-html/d8/dd5/example___d_g_e_l_s__rowmajor_8c_source.html).
+
+
+## Comparison
+
+The closest to Numy project (that I am aware of) is Matrex. Matrex is using immutable binaries
+and NIF code is calling `enif_make_binary` to return a result (matrix). `enif_make_binary` allocates
+memory space for the new binary. Numy on other hand is using mutable NIF resources and can reuse
+already allocated memory to store the result inside the context of NIF module.
 
 ## Installation
 
 ## Linear Algebra with LAPACK
 
 ### BLAS
+
+See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145.html).
 
 #### BLAS Level 1
 

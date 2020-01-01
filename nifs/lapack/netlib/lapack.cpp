@@ -244,39 +244,6 @@ NUMY_ERL_FUN nif_numy_version(ErlNifEnv* env, int /*argc*/, const ERL_NIF_TERM a
     return enif_make_string(env, STR(NUMY_VERSION), ERL_NIF_LATIN1);
 }
 
-//https://en.wikipedia.org/wiki/Givens_rotation
-//http://www.netlib.org/lapack/explore-html/df/d28/group__single__blas__level1_ga2f65d66137ddaeb7ae93fcc4902de3fc.html#ga2f65d66137ddaeb7ae93fcc4902de3fc
-NUMY_ERL_FUN numy_blas_drotg(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[] UNUSED)
-{
-    double a,b,c,s;
-    if (argc != 2 or !enif_get_double(env, argv[0], &a) or !enif_get_double(env, argv[1], &b)) {
-        return enif_make_badarg(env);
-    }
-
-    cblas_drotg(&a, &b, &c, &s);
-
-    return enif_make_tuple4(env,
-        enif_make_double(env, a), enif_make_double(env, b),
-        enif_make_double(env, c), enif_make_double(env, s));
-}
-
-//http://www.netlib.org/lapack/explore-html/df/d28/group__single__blas__level1_ga24785e467bd921df5a2b7300da57c469.html#ga24785e467bd921df5a2b7300da57c469
-//DCOPY copies a vector, x, to a vector, y.
-// [in]  num    - number of elements in input vector(s)
-// [in]  src    - src vector, dimension ( 1 + ( N - 1 )*abs( INCX ) )
-// [in]  srcInc - storage spacing between elements src
-// [out] dst    - dst vector, dimension ( 1 + ( N - 1 )*abs( INCY ) )
-// [in]  dstInc - storage spacing between elements dst
-//
-NUMY_ERL_FUN numy_blas_dcopy(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[] UNUSED)
-{
-    if (argc != 5) {
-        return enif_make_badarg(env);
-    }
-
-    return getOkAtom(env);
-}
-
 NUMY_ERL_FUN tensor_fill(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     if (argc != 2) {
@@ -285,8 +252,8 @@ NUMY_ERL_FUN tensor_fill(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     double fillVal{0.0};
     if (!enif_get_double(env, argv[1], &fillVal)) {
-        int intFillVal{0};
-        if (!enif_get_int(env, argv[1], &intFillVal)) {
+        int64_t intFillVal{0};
+        if (!enif_get_int64(env, argv[1], &intFillVal)) {
             return enif_make_badarg(env);
         }
         fillVal = intFillVal;
@@ -324,17 +291,96 @@ NUMY_ERL_FUN tensor_data(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     }
 
     double* data = (double*) tensor->data;
-    ERL_NIF_TERM* termArr = new ERL_NIF_TERM[tensor->nrElements];
+
+    ERL_NIF_TERM list, el;
+    list = enif_make_list(env, 0);
 
     for (unsigned i = 0; i < tensor->nrElements; ++i) {
-        termArr[i] = enif_make_double(env, data[i]);
+        el = enif_make_double(env, data[i]);
+        list = enif_make_list_cell(env, el, list);
     }
 
-    ERL_NIF_TERM list = enif_make_list_from_array(env, termArr, tensor->nrElements);
-
-    delete[] termArr;
-
     return list;
+}
+
+NUMY_ERL_FUN tensor_assign(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensor = getTensor(env, argv[0]);
+
+    if (tensor == nullptr or tensor->magic != numy::Tensor::MAGIC) {
+	    return enif_make_badarg(env);
+    }
+
+    ERL_NIF_TERM list = argv[1];
+    if (!enif_is_list(env, list)) {
+        return enif_make_badarg(env);
+    }
+
+    unsigned listLen{0};
+    if (!enif_get_list_length(env, list, &listLen)) {
+        return enif_make_badarg(env);
+    }
+
+    unsigned len = std::min(listLen, tensor->nrElements);
+
+    double* data = (double*) tensor->data;
+
+    double headVal; int64_t headIntVal;
+    ERL_NIF_TERM head, tail, currentList = list;
+
+    for (unsigned i = 0; i < len; ++i)
+    {
+        if (!enif_get_list_cell(env, currentList, &head, &tail))  {
+            break;
+        }
+        currentList = tail;
+        if (!enif_get_double(env, head, &headVal)) {
+            if (!enif_get_int64(env, head, &headIntVal)) {
+                break;
+            }
+            headVal = headIntVal;
+        }
+        data[i] = headVal;
+    }
+
+    return getOkAtom(env);
+}
+
+//https://en.wikipedia.org/wiki/Givens_rotation
+//http://www.netlib.org/lapack/explore-html/df/d28/group__single__blas__level1_ga2f65d66137ddaeb7ae93fcc4902de3fc.html#ga2f65d66137ddaeb7ae93fcc4902de3fc
+NUMY_ERL_FUN numy_blas_drotg(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[] UNUSED)
+{
+    double a,b,c,s;
+    if (argc != 2 or !enif_get_double(env, argv[0], &a) or !enif_get_double(env, argv[1], &b)) {
+        return enif_make_badarg(env);
+    }
+
+    cblas_drotg(&a, &b, &c, &s);
+
+    return enif_make_tuple4(env,
+        enif_make_double(env, a), enif_make_double(env, b),
+        enif_make_double(env, c), enif_make_double(env, s));
+}
+
+//http://www.netlib.org/lapack/explore-html/df/d28/group__single__blas__level1_ga24785e467bd921df5a2b7300da57c469.html#ga24785e467bd921df5a2b7300da57c469
+//DCOPY copies a vector, x, to a vector, y.
+// [in]  num    - number of elements in input vector(s)
+// [in]  src    - src vector, dimension ( 1 + ( N - 1 )*abs( INCX ) )
+// [in]  srcInc - storage spacing between elements src
+// [out] dst    - dst vector, dimension ( 1 + ( N - 1 )*abs( INCY ) )
+// [in]  dstInc - storage spacing between elements dst
+//
+NUMY_ERL_FUN numy_blas_dcopy(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[] UNUSED)
+{
+    if (argc != 5) {
+        return enif_make_badarg(env);
+    }
+
+    return getOkAtom(env);
 }
 
 static ErlNifFunc nif_funcs[] = {
@@ -342,6 +388,7 @@ static ErlNifFunc nif_funcs[] = {
     {    "nif_numy_version",     0, nif_numy_version,   0},
     {         "fill_tensor",     2,      tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {         "tensor_data",     1,      tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {       "tensor_assign",     2,    tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "blas_drotg",     2,  numy_blas_drotg,   0},
     {          "blas_dcopy",     5,  numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
