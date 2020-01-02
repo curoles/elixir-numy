@@ -50,14 +50,23 @@ defmodule Numy.Float do
   end
 
   @doc """
+  [ULP](https://en.wikipedia.org/wiki/Unit_in_the_last_place) difference.
+  """
+  @spec ulp_diff(float, float) :: integer
+  def ulp_diff(a, b), do: abs(as_uint64(a) - as_uint64(b))
+
+  @doc """
   Equality comparison for floating point numbers.
 
   Based on [this blog post](
     https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/)
   by Bruce Dawson.
   """
-  @spec close?(number, number, float, non_neg_integer) :: boolean
-  def close?(a, b, epsilon \\ 1.0e-9, max_ulps \\ 1) when is_integer(max_ulps) do
+  @spec close?(number, number, float, pos_integer) :: boolean
+  def close?(a, b, epsilon \\ 1.0e-9, max_ulps \\ 1)
+  def close?(a, b, epsilon, max_ulps)
+  when is_number(a) and is_number(b) and is_integer(max_ulps) do
+
     a = :erlang.float a
     b = :erlang.float b
 
@@ -73,10 +82,10 @@ defmodule Numy.Float do
     end
   end
 
-  @doc """
-  [ULP](https://en.wikipedia.org/wiki/Unit_in_the_last_place) difference.
-  """
-  @spec ulp_diff(float, float) :: integer
-  def ulp_diff(a, b), do: abs(as_uint64(a) - as_uint64(b))
+  def close?(al, bl, epsilon, max_ulps)
+  when is_list(al) and is_list(bl) and is_integer(max_ulps) do
+    Enum.zip(List.flatten(al), List.flatten(bl))
+    |> Enum.all?(fn {a,b} -> close?(a,b,epsilon,max_ulps) end)
+  end
 
 end

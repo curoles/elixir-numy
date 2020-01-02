@@ -276,7 +276,12 @@ NUMY_ERL_FUN tensor_fill(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 NUMY_ERL_FUN tensor_data(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    if (argc != 1) {
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    int maxNrElm{0};
+    if (!enif_get_int(env, argv[1], &maxNrElm)) {
         return enif_make_badarg(env);
     }
 
@@ -290,12 +295,16 @@ NUMY_ERL_FUN tensor_data(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_list(env, 0);
     }
 
+    unsigned retNrElm = (maxNrElm < 1)?
+        tensor->nrElements:
+        std::min(tensor->nrElements, (unsigned)maxNrElm);
+
     double* data = (double*) tensor->data;
 
     ERL_NIF_TERM list, el;
     list = enif_make_list(env, 0);
 
-    for (int i = tensor->nrElements - 1; i >= 0; --i) {
+    for (int i = retNrElm - 1; i >= 0; --i) {
         el = enif_make_double(env, data[i]);
         list = enif_make_list_cell(env, el, list);
     }
@@ -427,7 +436,7 @@ static ErlNifFunc nif_funcs[] = {
     {       "create_tensor",     1,         tensor_create,   0},
     {    "nif_numy_version",     0,      nif_numy_version,   0},
     {         "fill_tensor",     2,           tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {         "tensor_data",     1,           tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {         "tensor_data",     2,           tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {       "tensor_assign",     2,         tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "blas_drotg",     2,       numy_blas_drotg,   0},
     {          "blas_dcopy",     5,       numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND},

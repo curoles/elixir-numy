@@ -23,6 +23,12 @@ defmodule NumyTest do
     b = Numy.Lapack.new_tensor([2,5])
     Numy.Lapack.assign(b, [-10,-3,12,14,14,12,16,16,18,16])
     Numy.Lapack.solve_lls(a,b)
-    #check [2,1],[1,1],[1,2] Numy.Lapack.data(b)
+    assert Numy.Float.close?(Numy.Lapack.data(b,6), [[2,1], [1,1], [1,2]])
+    # Repeat one more time
+    Numy.Tz.assign(a, [[1,1,1],[2,3,4],[3,5,2],[4,2,5],[5,4,3]])
+    Numy.Tz.assign(b, [[-10,-3],[12,14],[14,12],[16,16],[18,16]])
+    Numy.Lapack.solve_lls(a,b)
+    solution = Numy.Lapack.data(b,2*3)
+    assert Numy.Float.close?(solution, [[2,1], [1,1], [1,2]])
   end
 end

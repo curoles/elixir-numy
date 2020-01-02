@@ -83,17 +83,17 @@ end
 
 # Tz protocol implementation
 #
-defimpl Numy.Tz, for: Numy.Tensor do
-
-  def ndim(tensor) do
-    try do
-      Numy.Tensor.nr_dimensions(tensor.nif_resource)
-    rescue
-      _ -> 0
-    end
-  end
-
-  #def nelm(_tensor) do
-  #  1 # TODO Numy.Tensor.nr_elements(tensor)
-  #end
-end
+#defimpl Numy.Tz, for: Numy.Tensor do
+#
+#  def ndim(tensor) do
+#    try do
+#      Numy.Tensor.nr_dimensions(tensor.nif_resource)
+#    rescue
+#      _ -> 0
+#    end
+#  end
+#
+#  #def nelm(_tensor) do
+#  #  1 # TODO Numy.Tensor.nr_elements(tensor)
+#  #end
+#end

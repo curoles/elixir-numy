@@ -119,13 +119,13 @@ defmodule Numy.Lapack do
     end
   end
 
-  def tensor_data(_tensor) do
-    raise "tensor_data/1 not implemented"
+  def tensor_data(_tensor, _nelm) do
+    raise "tensor_data/2 not implemented"
   end
 
-  def data(tensor) when is_map(tensor) do
+  def data(tensor, nelm \\ -1) when is_map(tensor) do
     try do
-      tensor_data(tensor.nif_resource)
+      tensor_data(tensor.nif_resource, nelm)
     rescue
       _ ->
       :error
@@ -141,7 +141,7 @@ defmodule Numy.Lapack do
       tensor_assign(tensor.nif_resource, List.flatten(list))
     rescue
       _ ->
-      :error
+        :error
     end
   end
 
@@ -190,5 +190,27 @@ defmodule Numy.Lapack do
             :error
         end
     end
+  end
+end
+
+
+# Tz protocol implementation
+#
+defimpl Numy.Tz, for: Numy.Lapack do
+
+  def ndim(tensor) do
+    length(tensor.shape)
+  end
+
+  def nelm(tensor) do
+    Enum.reduce(tensor.shape, 1, fn x, acc -> acc * x end)
+  end
+
+  def assign(tensor, list) do
+    Numy.Lapack.assign(tensor, list)
+  end
+
+  def data(tensor, nelm \\ -1) do
+    Numy.Lapack.data(tensor, nelm)
   end
 end
