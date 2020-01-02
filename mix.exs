@@ -32,8 +32,10 @@ defmodule Numy.MixProject do
       app: :numy,
       version: "0.1.0",
       elixir: "~> 1.9",
+      description: "LAPACK based scientific library",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      package: package(),
       # Add our native compilation step to the list of compilers,
       # see https://hexdocs.pm/mix/1.0.5/Mix.Tasks.Compile.html
       compilers: [:numy] ++ Mix.compilers,
@@ -42,14 +44,14 @@ defmodule Numy.MixProject do
       # Docs
       name: "Numy",
       source_url: "https://github.com/curoles/elixir-numy",
-      #homepage_url: "http://YOUR_PROJECT_HOMEPAGE",
+      homepage_url: "https://github.com/curoles/elixir-numy",
       docs: [
         #main: "MyApp", # The main page in the docs
         #logo: "path/to/logo.png",
         authors: ["Igor Lesik"],
         extras: [
-          "README.md", "RELEASE.md",
-          "nifs/lapack/netlib/README.md": [filename: "nifs_lapack_README"]
+          "README.md", #"RELEASE.md",
+          #"nifs/lapack/netlib/README.md": [filename: "nifs_lapack_README"]
         ]
       ]
     ]
@@ -73,4 +75,17 @@ defmodule Numy.MixProject do
     ]
   end
 
+  defp package() do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/curoles/elixir-numy"},
+      files: [
+        "lib",
+        "nifs",
+        "Makefile",
+        "README.md",
+        "mix.exs"
+      ]
+    ]
+  end
 end
