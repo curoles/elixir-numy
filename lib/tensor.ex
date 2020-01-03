@@ -34,8 +34,7 @@ defmodule Numy.Tensor do
   Callback on module's load. Loads NIF shared library.
   """
   def load_nifs do
-    mix_app = Mix.Project.config[:app]
-    path = :filename.join(:code.priv_dir(mix_app), 'libnumy_tensor')
+    path = :filename.join(:code.priv_dir(:numy), 'libnumy_tensor')
     :erlang.load_nif(path, 0)
   end
 

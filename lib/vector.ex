@@ -19,8 +19,7 @@ defmodule Numy.Vector do
   Callback on module's load. Loads NIF shared library.
   """
   def load_nifs do
-    mix_app = Mix.Project.config[:app]
-    path = :filename.join(:code.priv_dir(mix_app), 'libnumy_vector')
+    path = :filename.join(:code.priv_dir(:numy), 'libnumy_vector')
     :erlang.load_nif(path, 0)
   end
 
