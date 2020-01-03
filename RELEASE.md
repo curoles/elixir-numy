@@ -1,5 +1,9 @@
 # Releases
 
+## 0.1.0 (01/01/20) Fixing 1st release
+
+Fix how .so files are searched
+
 ## 0.1.0 (01/01/20) First release
 
 - create NIF module Numy.Lapack, link with generic Netlib LAPACK

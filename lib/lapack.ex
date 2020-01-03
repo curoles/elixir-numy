@@ -42,9 +42,8 @@ defmodule Numy.Lapack do
 
   defp check_nif_version() do
     try do
-      if "#{nif_numy_version()}" != "#{Mix.Project.config[:version]}" do
-        raise "NIF Numy version is #{nif_numy_version()}, " <>
-              "expected #{Mix.Project.config[:version]}"
+      if "#{nif_numy_version()}" != "0.1.1" do
+        raise "NIF Numy version is #{nif_numy_version()}, expected 0.1.1"
       end
       :ok
     rescue

@@ -1,11 +1,6 @@
 # Numy
 
-**Numy** is a library to be used for scientific and technical computing.
-
-**Numy** contains modules for:
-
-- Linear Algebra. **Numy** has NIF wrapper around native LAPACK library.
-- more not yet
+**Numy** is LAPACK based scientific computing library.
 
 ## Table of contents
 
@@ -63,7 +58,7 @@ by adding `numy` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:numy, "~> 0.1.0"}
+    {:numy, "~> 0.1.1"}
   ]
 end
 ```
@@ -74,22 +69,22 @@ end
 
 See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145.html).
 
-#### BLAS Level 1
+#### BLAS Level 1, functions that operate on vectors
 
 |          Wrapper function       |       Direct function      |        Description               |
 | ------------------------------: | -------------------------: | ---------------------------------|
 |         generate_plane_rotation |                 blas_drotg | |
 | | | |
 
-#### BLAS Level 2
+#### BLAS Level 2, matrix-vector operations
 
-#### BLAS Level 3
+#### BLAS Level 3, matrix-matri operations
 
 ### LAPACK
 
-|          Wrapper function       |       Direct function      |        Description               |
-| ------------------------------: | -------------------------: | ---------------------------------|
-|                       solve_lls |               lapack_dgels | |
+|          Wrapper function       |       Direct function      |        Description                    |
+| ------------------------------: | -------------------------: | ------------------------------------- |
+|                       solve_lls |               lapack_dgels | Linear Least Squares by QR/LR         |
 | | | |
 
 <!--

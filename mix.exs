@@ -30,7 +30,7 @@ defmodule Numy.MixProject do
   def project do
     [
       app: :numy,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.9",
       description: "LAPACK based scientific library",
       start_permanent: Mix.env() == :prod,
@@ -46,7 +46,7 @@ defmodule Numy.MixProject do
       source_url: "https://github.com/curoles/elixir-numy",
       homepage_url: "https://github.com/curoles/elixir-numy",
       docs: [
-        #main: "MyApp", # The main page in the docs
+        main: "readme", # The main page in the docs
         #logo: "path/to/logo.png",
         authors: ["Igor Lesik"],
         extras: [
