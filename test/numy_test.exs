@@ -2,11 +2,12 @@ defmodule NumyTest do
   use ExUnit.Case
   doctest Numy
 
-  test "vector dot_product Elixir and NIF results match" do
-    vec = Enum.to_list(1..1000) |> Enum.map(fn x -> x/2 end)
-    erl_res = Numy.Vector.dot_product(vec, vec)
-    nif_res = Numy.Vector.nif_dot_product(vec, vec)
-    assert abs(erl_res - nif_res) < 0.00001
+  test "basic vector ops" do
+    alias Numy.Vc, as: Vc
+    v = Numy.Vector.new_from_list([1,2,3])
+    assert Vc.close?(Vc.add(v,v), Vc.scale(v,2))
+    bv = Numy.BigVector.new_from_list([1,2,3])
+    assert Vc.close?(Vc.add(v,v), Vc.scale(bv,2))
   end
 
   test "float sign, signbit,close?" do

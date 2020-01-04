@@ -31,6 +31,18 @@ defmodule Numy.BigVector do
       %{v | data: Numy.Float.make_list_randoms(v.nelm)}
     end
 
+    def at(v, index, default \\ nil) when is_map(v) and is_integer(index) do
+      Enum.at(v.data, index, default)
+    end
+
+    def empty?(v) when is_map(v) do
+      v.nelm == 0
+    end
+
+    def close?(v1,v2) when is_map(v1) and is_map(v2) do
+      Numy.Float.close?(v1.data, v2.data)
+    end
+
     @doc """
     Add two vectors.
 
@@ -76,9 +88,6 @@ defmodule Numy.BigVector do
 
   end # defimpl Numy.Vc do
 
-
-  def mean_sq_err([], _v2), do: 0
-  def mean_sq_err(_v1, []), do: 0
   def mean_sq_err(v1, v2) do
     sum_sq_err = Enum.zip(v1.data, v2.data)
     |> Flow.from_enumerable

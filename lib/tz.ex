@@ -41,6 +41,11 @@ defprotocol Numy.Vc do
   def assign_ones(v)
   def assign_random(v)
 
+  def at(v, index, default)
+  def empty?(v)
+
+  def close?(v1,v2)
+
   def add(v1, v2)
   def sub(v1, v2)
   def multiply(v1, v2)
