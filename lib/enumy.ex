@@ -72,21 +72,6 @@ defmodule Numy.Enumy do
 
       iex> dot_product([1,2,3],[2,3,0])
       8
-
-  ## Benchmarks
-
-      iex(1)> fn1 = fn(v1,v2) -> Numy.Enumy.dot_product(v1,v2) end
-      iex(2)> fn2 = fn(v1,v2) -> Enum.zip(v1,v2) |> Enum.map(fn {a,b} -> a * b end) |>
-      ...(2)> Enum.reduce(&Kernel.+/2) end
-      iex(3)> fn3 = fn(v1,v2) -> Enum.zip(v1,v2) |> Flow.from_enumerable |>
-      ...(3)> Flow.map(fn {a,b} -> a * b end) |> Enum.sum end
-      iex(4)> vec = Enum.to_list(1..999_000)
-      iex(20)> Benchee.run(%{"1" => fn -> fn1.(vec,vec) end,
-      ...(20)> "2" => fn -> fn2.(vec,vec) end, "3" => fn -> fn3.(vec,vec) end})
-      Comparison:
-      1            22.58
-      3             0.58 - 38.84x slower +1.68 s
-      2             0.30 - 76.26x slower +3.33 s
   """
   @spec dot_product([number], [number]) :: number
   def dot_product(vec1, _vec2) when vec1 == [], do: 0

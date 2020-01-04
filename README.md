@@ -63,46 +63,24 @@ def deps do
 end
 ```
 
-## Linear Algebra with LAPACK
-
-### BLAS
+## Linear Algebra BLAS
 
 See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145.html).
 
-#### BLAS Level 1, functions that operate on vectors
+### BLAS Level 1, functions that operate on vectors
 
 |          Wrapper function       |       Direct function      |        Description               |
 | ------------------------------: | -------------------------: | ---------------------------------|
 |         generate_plane_rotation |                 blas_drotg | |
 | | | |
 
-#### BLAS Level 2, matrix-vector operations
+### BLAS Level 2, matrix-vector operations
 
-#### BLAS Level 3, matrix-matri operations
+### BLAS Level 3, matrix-matri operations
 
-### LAPACK
+## Linear Algebra LAPACK
 
 |          Wrapper function       |       Direct function      |        Description                    |
 | ------------------------------: | -------------------------: | ------------------------------------- |
 |                       solve_lls |               lapack_dgels | Linear Least Squares by QR/LR         |
 | | | |
-
-<!--
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `numy` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:numy, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/numy](https://hexdocs.pm/numy).
-
--->

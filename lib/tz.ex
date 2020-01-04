@@ -25,3 +25,27 @@ defprotocol Numy.Tz do
 
   def data(tensor, nelm \\ -1)
 end
+
+defprotocol Numy.Mx do
+  @moduledoc """
+  Interface to Matrix
+  """
+end
+
+defprotocol Numy.Vc do
+  @moduledoc """
+  Interface to Vector
+  """
+
+  def assign_zeros(v)
+  def assign_ones(v)
+  def assign_random(v)
+
+  def add(v1, v2)
+  def sub(v1, v2)
+  def multiply(v1, v2)
+
+  def scale(v, factor)
+
+  def dot(v1, v2)
+end

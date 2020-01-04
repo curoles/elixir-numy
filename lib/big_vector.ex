@@ -1,6 +1,6 @@
-defmodule Numy.Vector do
+defmodule Numy.BigVector do
   @moduledoc """
-  Vector, basic implementation.
+  BigVector, use Flow.
   """
 
   @enforce_keys [:nelm]
@@ -10,11 +10,11 @@ defmodule Numy.Vector do
   ]
 
   def new(nelm) when is_integer(nelm) do
-    %Numy.Vector{nelm: nelm, data: List.duplicate(0.0, nelm)}
+    %Numy.BigVector{nelm: nelm, data: List.duplicate(0.0, nelm)}
   end
 
   def new_from_list(list) do
-    %Numy.Vector{nelm: length(list), data: Numy.Enumy.all_to_float(list)}
+    %Numy.BigVector{nelm: length(list), data: Numy.Enumy.all_to_float(list)}
   end
 
   defimpl Numy.Vc do
@@ -36,29 +36,38 @@ defmodule Numy.Vector do
 
     ## Examples
 
-        iex(5)> v = Numy.Vector.new_from_list([1,2,3])
-        %Numy.Vector{data: [1.0, 2.0, 3.0], nelm: 3}
+        iex(5)> v = Numy.BigVector.new_from_list([1,2,3])
+        %Numy.BigVector{data: [1.0, 2.0, 3.0], nelm: 3}
         iex(6)> Numy.Vc.add(v, v)
-        %Numy.Vector{data: [2.0, 4.0, 6.0], nelm: 3}
+        %Numy.BigVector{data: [2.0, 4.0, 6.0], nelm: 3}
     """
     def add(v1, v2) when is_map(v1) and is_map(v2) do
-      res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a + b end)
-      %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
+      res = Enum.zip(v1.data,v2.data)
+        |> Flow.from_enumerable
+        |> Flow.map(fn {a,b} -> a + b end)
+        |> Enum.to_list
+      %Numy.BigVector{nelm: min(v1.nelm,v2.nelm), data: res}
     end
 
     def sub(v1, v2) when is_map(v1) and is_map(v2) do
-      res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a - b end)
-      %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
+      res = Enum.zip(v1.data,v2.data)
+        |> Flow.from_enumerable
+        |> Flow.map(fn {a,b} -> a - b end)
+        |> Enum.to_list
+      %Numy.BigVector{nelm: min(v1.nelm,v2.nelm), data: res}
     end
 
     def multiply(v1, v2) when is_map(v1) and is_map(v2) do
-      res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a * b end)
-      %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
+      res = Enum.zip(v1.data,v2.data)
+        |> Flow.from_enumerable
+        |> Flow.map(fn {a,b} -> a * b end)
+        |> Enum.to_list
+      %Numy.BigVector{nelm: min(v1.nelm,v2.nelm), data: res}
     end
 
     def scale(v, factor) when is_map(v) and is_number(factor) do
       res = Enum.map(v.data, fn x -> x * factor end)
-      %Numy.Vector{nelm: v.nelm, data: res}
+      %Numy.BigVector{nelm: v.nelm, data: res}
     end
 
     def dot(v1, v2) when is_map(v1) and is_map(v2) do
@@ -72,7 +81,8 @@ defmodule Numy.Vector do
   def mean_sq_err(_v1, []), do: 0
   def mean_sq_err(v1, v2) do
     sum_sq_err = Enum.zip(v1.data, v2.data)
-    |> Enum.map(fn {a,b} -> (a - b)*(a - b) end)
+    |> Flow.from_enumerable
+    |> Flow.map(fn {a,b} -> (a - b)*(a - b) end)
     |> Enum.sum
 
     sum_sq_err / min(v1.nelm, v2.nelm)

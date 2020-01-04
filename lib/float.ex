@@ -88,4 +88,9 @@ defmodule Numy.Float do
     |> Enum.all?(fn {a,b} -> close?(a,b,epsilon,max_ulps) end)
   end
 
+  def make_list_randoms(size, list \\ [])
+  def make_list_randoms(0, list), do: list
+  def make_list_randoms(size, list) when is_integer(size) do
+    make_list_randoms(size - 1, [:rand.uniform(), list])
+  end
 end

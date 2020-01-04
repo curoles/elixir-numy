@@ -3,7 +3,7 @@
 # Author: Igor Lesik 2019
 
 ifndef MIX_ENV
-$(error MIX_ENV is not set, check Mix.Tasks.Compile.Numy.run())
+$(error MIX_ENV is not set)
 endif
 
 ifndef NUMY_VERSION
@@ -32,18 +32,17 @@ else
 CFLAGS += -O3 -DNDEBUG
 endif
 
-#NETLIB_LAPACK_STATIC_LIBS := -l:liblapacke.a -l:liblapack.a -l:libblas.a -lgfortran
 NETLIB_LAPACK_LIBS := -llapacke -llapack -lblas -lgfortran
 
-NUMY_VECTOR_LIB := priv/libnumy_vector_${MIX_ENV}.so
-NUMY_TENSOR_LIB := priv/libnumy_tensor_${MIX_ENV}.so
+#NUMY_VECTOR_LIB := priv/libnumy_vector_${MIX_ENV}.so
+#NUMY_TENSOR_LIB := priv/libnumy_tensor_${MIX_ENV}.so
 NUMY_LAPACK_LIB := priv/libnumy_lapack_${MIX_ENV}.so
 
 .PHONY: all
 all: ${NUMY_VECTOR_LIB} ${NUMY_TENSOR_LIB} ${NUMY_LAPACK_LIB}
 
-NUMY_VECTOR_SRC := ./nifs/vector.cpp
-NUMY_TENSOR_SRC := ./nifs/tensor/tensor.cpp
+#NUMY_VECTOR_SRC := ./nifs/vector.cpp
+#NUMY_TENSOR_SRC := ./nifs/tensor/tensor.cpp
 NUMY_LAPACK_SRC := ./nifs/lapack/netlib/lapack.cpp
 
 ${NUMY_LAPACK_LIB}: ${NUMY_LAPACK_SRC}
@@ -51,18 +50,18 @@ ${NUMY_LAPACK_LIB}: ${NUMY_LAPACK_SRC}
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ ${NETLIB_LAPACK_LIBS}
 	@ln -srf $@ priv/libnumy_lapack.so
 
-${NUMY_VECTOR_LIB}: ${NUMY_VECTOR_SRC}
-	@mkdir -p ./priv
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
-	@ln -srf $@ priv/libnumy_vector.so
+#${NUMY_VECTOR_LIB}: ${NUMY_VECTOR_SRC}
+#	@mkdir -p ./priv
+#	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+#	@ln -srf $@ priv/libnumy_vector.so
 
-${NUMY_TENSOR_LIB}: ${NUMY_TENSOR_SRC}
-	@mkdir -p ./priv
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
-	@ln -srf $@ priv/libnumy_tensor.so
+#${NUMY_TENSOR_LIB}: ${NUMY_TENSOR_SRC}
+#	@mkdir -p ./priv
+#	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+#	@ln -srf $@ priv/libnumy_tensor.so
 
 .PHONY: clean
 clean:
 	rm -f ${NUMY_LAPACK_LIB}
-	rm -f ${NUMY_VECTOR_LIB}
-	rm -f ${NUMY_TENSOR_LIB}
+	#rm -f ${NUMY_VECTOR_LIB}
+	#rm -f ${NUMY_TENSOR_LIB}
