@@ -43,10 +43,15 @@ all: ${NUMY_VECTOR_LIB} ${NUMY_TENSOR_LIB} ${NUMY_LAPACK_LIB}
 
 #NUMY_VECTOR_SRC := ./nifs/vector.cpp
 #NUMY_TENSOR_SRC := ./nifs/tensor/tensor.cpp
-NUMY_LAPACK_SRC := ./nifs/lapack/netlib/lapack.cpp ./nifs/tensor/vector.cpp
-NUMY_LAPACK_DEPS := ./nifs/tensor/tensor.hpp ./nifs/tensor/nif_resource.hpp ./nifs/tensor/vector.hpp
 
-${NUMY_LAPACK_SRC}: ${NUMY_LAPACK_DEPS}
+NUMY_LAPACK_SRC := ./nifs/lapack/netlib/lapack.cpp ./nifs/tensor/vector.cpp
+NUMY_LAPACK_SRC += ./nifs/lapack/netlib/blas.cpp
+
+NUMY_LAPACK_DEPS := ./nifs/tensor/tensor.hpp ./nifs/tensor/nif_resource.hpp
+NUMY_LAPACK_DEPS += ./nifs/tensor/vector.hpp ./nifs/lapack/netlib/blas.hpp
+
+./nifs/lapack/netlib/lapack.cpp: ${NUMY_LAPACK_DEPS}
+	@touch $@
 
 ${NUMY_LAPACK_LIB}: ${NUMY_LAPACK_SRC}
 	@mkdir -p ./priv

@@ -58,8 +58,15 @@ end
 defprotocol Numy.Vcm do
   @moduledoc """
   Interface to mutable Vector.
+
+  Native objects do not follow Elixir/Erlang model where an object
+  is always immutable. We purposefully allow native objects to be mutable
+  in order to get better performance in numerical computing.
   """
 
+  @doc """
+  Add two vectors, v1 = v1 + v2.
+  """
   def add!(v1, v2)
 
 end
