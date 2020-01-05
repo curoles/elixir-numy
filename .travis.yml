@@ -7,5 +7,6 @@ otp_release:
 env:
   - MIX_ENV=test
 script: mix test
+dist: bionic:
 before_install:
   - sudo apt-get -y install liblapacke-dev gfortran
