@@ -1,6 +1,8 @@
 defmodule Numy.Vector do
   @moduledoc """
   Vector, basic implementation.
+
+  Implements protocols: `Numy.Vc`
   """
 
   @enforce_keys [:nelm]
@@ -13,7 +15,7 @@ defmodule Numy.Vector do
     %Numy.Vector{nelm: nelm, data: List.duplicate(0.0, nelm)}
   end
 
-  def new_from_list(list) do
+  def new(list) when is_list(list) do
     %Numy.Vector{nelm: length(list), data: Numy.Enumy.all_to_float(list)}
   end
 
@@ -48,7 +50,7 @@ defmodule Numy.Vector do
 
     ## Examples
 
-        iex(5)> v = Numy.Vector.new_from_list([1,2,3])
+        iex(5)> v = Numy.Vector.new([1,2,3])
         %Numy.Vector{data: [1.0, 2.0, 3.0], nelm: 3}
         iex(6)> Numy.Vc.add(v, v)
         %Numy.Vector{data: [2.0, 4.0, 6.0], nelm: 3}

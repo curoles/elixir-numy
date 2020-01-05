@@ -1,6 +1,8 @@
 defmodule Numy.BigVector do
   @moduledoc """
-  BigVector, use Flow.
+  BigVector, uses Flow, experimental, does not show good results yet.
+
+  Implements protocols: `Numy.Vc`
   """
 
   @enforce_keys [:nelm]
@@ -13,7 +15,7 @@ defmodule Numy.BigVector do
     %Numy.BigVector{nelm: nelm, data: List.duplicate(0.0, nelm)}
   end
 
-  def new_from_list(list) do
+  def new(list) when is_list(list) do
     %Numy.BigVector{nelm: length(list), data: Numy.Enumy.all_to_float(list)}
   end
 
@@ -48,7 +50,7 @@ defmodule Numy.BigVector do
 
     ## Examples
 
-        iex(5)> v = Numy.BigVector.new_from_list([1,2,3])
+        iex(5)> v = Numy.BigVector.new([1,2,3])
         %Numy.BigVector{data: [1.0, 2.0, 3.0], nelm: 3}
         iex(6)> Numy.Vc.add(v, v)
         %Numy.BigVector{data: [2.0, 4.0, 6.0], nelm: 3}

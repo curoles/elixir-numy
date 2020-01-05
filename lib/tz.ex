@@ -54,3 +54,12 @@ defprotocol Numy.Vc do
 
   def dot(v1, v2)
 end
+
+defprotocol Numy.Vcm do
+  @moduledoc """
+  Interface to mutable Vector.
+  """
+
+  def add!(v1, v2)
+
+end

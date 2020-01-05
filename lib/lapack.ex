@@ -189,6 +189,15 @@ defmodule Numy.Lapack do
         end
     end
   end
+
+  def vector_add(_tensor_a, _tensor_b) do
+    raise "vector_add/2 not implemented"
+  end
+
+  def vector_dot(_tensor_a, _tensor_b) do
+    raise "vector_dot/2 not implemented"
+  end
+
 end
 
 

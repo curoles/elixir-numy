@@ -14,7 +14,7 @@ namespace numy {
 
 struct Tensor
 {
-    static unsigned constexpr MAX_DIMS = 100;
+    static unsigned constexpr MAX_DIMS = 32;
     static uint64_t constexpr MAGIC = 0xbadc01dc0ffe;
 
     uint64_t magic = MAGIC; ///< to check we are actually dealing with Tensor

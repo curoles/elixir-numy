@@ -18,6 +18,8 @@
 #include <cblas.h> 
 
 #include "tensor/tensor.hpp"
+#include "tensor/nif_resource.hpp"
+#include "tensor/vector.hpp"
 
 #define UNUSED __attribute__((unused))
 #define NUMY_ERL_FUN static ERL_NIF_TERM
@@ -26,80 +28,13 @@
 #define STR(x) STR_(x)
 
 /**
- * NIFResource manages Tensor NIF resources. 
- */
-class NIFResource
-{
-public:
-    using ResType = ErlNifResourceType*;
-
-private:
-    ResType res_type_ = nullptr;
-
-public:
-    ERL_NIF_TERM ok_atom_;
-
-public:
-    ResType open(ErlNifEnv* env);
-
-    static
-    void dtor(ErlNifEnv* env, void* obj)
-    {
-        numy::Tensor* tensor = (numy::Tensor*) obj;
-        //assert(tensor->magic == numy::Tensor::MAGIC);
-        if (tensor->magic != numy::Tensor::MAGIC) {
-            enif_raise_exception(env,
-                enif_make_string(env, "Tensor bad magic", ERL_NIF_LATIN1));
-        }
-        else {
-            if (tensor->data != nullptr) {
-                enif_free(tensor->data);
-            }
-        }
-    }
-
-    numy::Tensor* allocate() {
-        return static_cast<numy::Tensor*>(
-            enif_alloc_resource(res_type_, sizeof(numy::Tensor)));
-    }
-
-    numy::Tensor* get(ErlNifEnv* env, const ERL_NIF_TERM tensorNifTerm) {
-        numy::Tensor* tensor{nullptr};
-        return (enif_get_resource(env, tensorNifTerm, res_type_, (void**) &tensor))?
-            tensor:
-            nullptr;
-    }
-};
-
-/**
- * 
- * 
- * Notice that enif_open_resource_type is only allowed to be called
- * in the two callbacks `load` and `upgrade`.
- */
-NIFResource::ResType NIFResource::open(ErlNifEnv* env)
-{
-    ok_atom_ = enif_make_atom(env, "ok");
-
-    res_type_ = enif_open_resource_type(
-        env,
-        "Elixir.Numy.Tensor",
-        "resource type Tensor",
-        this->dtor,
-        (ErlNifResourceFlags)(ERL_NIF_RT_CREATE | ERL_NIF_RT_TAKEOVER),
-        nullptr //ErlNifResourceFlags* tried
-    );
-
-    return res_type_;
-}
-
-/**
  * load is called when the NIF library is loaded and no previously loaded
  * library exists for this module.
  */
 static int
 load_nif(ErlNifEnv* env, void** priv, ERL_NIF_TERM /*info*/)
 {
+    using namespace numy::tnsr;
     NIFResource* resource = (NIFResource*) enif_alloc(sizeof(NIFResource));
 
     if (resource->open(env) == nullptr) {
@@ -207,6 +142,7 @@ bool tensor_construct(numy::Tensor* tensor,
 static ERL_NIF_TERM
 tensor_create(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
+    using namespace numy::tnsr;
     NIFResource* resourceMngr = (NIFResource*) enif_priv_data(env);
 
     if (resourceMngr == nullptr)
@@ -229,16 +165,6 @@ tensor_create(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     return nifTensor;
 }
 
-static inline
-numy::Tensor* getTensor(ErlNifEnv* env, const ERL_NIF_TERM nifTensor) {
-    NIFResource* resourceMngr = (NIFResource*) enif_priv_data(env);
-    return resourceMngr->get(env, nifTensor);
-}
-
-static inline ERL_NIF_TERM getOkAtom(ErlNifEnv* env) {
-    return ((NIFResource*) enif_priv_data(env))->ok_atom_;
-}
-
 NUMY_ERL_FUN nif_numy_version(ErlNifEnv* env, int /*argc*/, const ERL_NIF_TERM argv[] UNUSED)
 {
     return enif_make_string(env, STR(NUMY_VERSION), ERL_NIF_LATIN1);
@@ -259,7 +185,7 @@ NUMY_ERL_FUN tensor_fill(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         fillVal = intFillVal;
     }
 
-    const numy::Tensor* tensor = getTensor(env, argv[0]);
+    const numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
 
     if (tensor == nullptr or tensor->magic != numy::Tensor::MAGIC) {
 	    return enif_make_badarg(env);
@@ -271,7 +197,7 @@ NUMY_ERL_FUN tensor_fill(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         data[i] = fillVal;
     }
 
-    return getOkAtom(env);
+    return numy::tnsr::getOkAtom(env);
 }
 
 NUMY_ERL_FUN tensor_data(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -285,7 +211,7 @@ NUMY_ERL_FUN tensor_data(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
-    const numy::Tensor* tensor = getTensor(env, argv[0]);
+    const numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
 
     if (tensor == nullptr or tensor->magic != numy::Tensor::MAGIC or !tensor->isValid()) {
 	    return enif_make_badarg(env);
@@ -318,7 +244,7 @@ NUMY_ERL_FUN tensor_assign(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
-    const numy::Tensor* tensor = getTensor(env, argv[0]);
+    const numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
 
     if (tensor == nullptr or tensor->magic != numy::Tensor::MAGIC) {
 	    return enif_make_badarg(env);
@@ -356,7 +282,7 @@ NUMY_ERL_FUN tensor_assign(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         data[i] = headVal;
     }
 
-    return getOkAtom(env);
+    return numy::tnsr::getOkAtom(env);
 }
 
 //https://en.wikipedia.org/wiki/Givens_rotation
@@ -389,7 +315,7 @@ NUMY_ERL_FUN numy_blas_dcopy(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
         return enif_make_badarg(env);
     }
 
-    return getOkAtom(env);
+    return numy::tnsr::getOkAtom(env);
 }
 
 //http://www.netlib.org/lapack/explore-html/d7/d3b/group__double_g_esolve_ga225c8efde208eaf246882df48e590eac.html#ga225c8efde208eaf246882df48e590eac
@@ -399,8 +325,8 @@ NUMY_ERL_FUN numy_lapack_dgels(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
         return enif_make_badarg(env);
     }
 
-    const numy::Tensor* tensorA = getTensor(env, argv[0]);
-    const numy::Tensor* tensorB = getTensor(env, argv[1]);
+    const numy::Tensor* tensorA = numy::tnsr::getTensor(env, argv[0]);
+    const numy::Tensor* tensorB = numy::tnsr::getTensor(env, argv[1]);
 
     if (tensorA == nullptr or tensorA->magic != numy::Tensor::MAGIC or !tensorA->isValid() or
         tensorB == nullptr or tensorB->magic != numy::Tensor::MAGIC or !tensorB->isValid())
@@ -433,14 +359,17 @@ NUMY_ERL_FUN numy_lapack_dgels(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 }
 
 static ErlNifFunc nif_funcs[] = {
-    {       "create_tensor",     1,         tensor_create,   0},
-    {    "nif_numy_version",     0,      nif_numy_version,   0},
-    {         "fill_tensor",     2,           tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {         "tensor_data",     2,           tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {       "tensor_assign",     2,         tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {          "blas_drotg",     2,       numy_blas_drotg,   0},
-    {          "blas_dcopy",     5,       numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {        "lapack_dgels",     2,     numy_lapack_dgels,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {       "create_tensor",   1,           tensor_create,   0},
+    {    "nif_numy_version",   0,        nif_numy_version,   0},
+    {         "fill_tensor",   2,             tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {         "tensor_data",   2,             tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {       "tensor_assign",   2,           tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "blas_drotg",   2,         numy_blas_drotg,   0},
+    {          "blas_dcopy",   5,         numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {        "lapack_dgels",   2,       numy_lapack_dgels,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_add",   2,         numy_vector_add,   0},
+    {          "vector_dot",   2, numy_vector_dot_product,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+
 };
 
 // Performs all the magic needed to actually hook things up.

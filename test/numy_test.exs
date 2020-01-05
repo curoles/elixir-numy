@@ -4,9 +4,9 @@ defmodule NumyTest do
 
   test "basic vector ops" do
     alias Numy.Vc, as: Vc
-    v = Numy.Vector.new_from_list([1,2,3])
+    v = Numy.Vector.new([1,2,3])
     assert Vc.close?(Vc.add(v,v), Vc.scale(v,2))
-    bv = Numy.BigVector.new_from_list([1,2,3])
+    bv = Numy.BigVector.new([1,2,3])
     assert Vc.close?(Vc.add(v,v), Vc.scale(bv,2))
   end
 
