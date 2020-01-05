@@ -1,4 +1,7 @@
 # Numy
+[![hex.pm version](https://img.shields.io/hexpm/v/numy.svg)](https://hex.pm/packages/numy)
+[![Build Status](https://travis-ci.org/curoles/elixir-numy.svg?branch=master)](
+https://travis-ci.org/curoles/elixir-numy)
 
 **Numy** is LAPACK based scientific computing library.
 
@@ -80,7 +83,8 @@ See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145
 
 ## Linear Algebra LAPACK
 
-|          Wrapper function       |       Direct function      |        Description                    |
-| ------------------------------: | -------------------------: | ------------------------------------- |
-|                       solve_lls |               lapack_dgels | Linear Least Squares by QR/LR         |
+|          Wrapper function       |       Direct function      |        Description                  |
+| ------------------------------: | -------------------------: |-------------------------------------|
+|                       solve_lls |               lapack_dgels | Linear Least Squares by QR/LR       |
 | | | |
+
