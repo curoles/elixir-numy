@@ -2,6 +2,8 @@
 [![hex.pm version](https://img.shields.io/hexpm/v/numy.svg)](https://hex.pm/packages/numy)
 [![Build Status](https://travis-ci.org/curoles/elixir-numy.svg?branch=master)](
 https://travis-ci.org/curoles/elixir-numy)
+[![hex.pm](https://img.shields.io/hexpm/l/numy.svg)](
+https://github.com/curoles/elixir-numy/blob/master/LICENSE)
 
 **Numy** is LAPACK based scientific computing library.
 
