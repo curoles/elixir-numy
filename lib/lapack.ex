@@ -198,6 +198,19 @@ defmodule Numy.Lapack do
     raise "vector_dot/2 not implemented"
   end
 
+  @doc "Deep copy of all elements regardless of shape and data type."
+  def data_copy_all(_tensor_a, _tensor_b) do
+    raise "data_copy_all/2 not implemented"
+  end
+
+  def copy(tensor_dst, tensor_src) when is_map(tensor_dst) and is_map(tensor_src) do
+    try do
+      data_copy_all(tensor_dst.nif_resource, tensor_src.nif_resource)
+    rescue
+      _ -> :error
+    end
+  end
+
 end
 
 

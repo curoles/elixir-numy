@@ -19,6 +19,11 @@ defmodule Numy.Vector do
     %Numy.Vector{nelm: length(list), data: Numy.Enumy.all_to_float(list)}
   end
 
+  @doc "Create new Vector as a copy of other Vector"
+  def new(%Numy.Vector{nelm: sz, data: d} = _v) do
+    %Numy.Vector{nelm: sz, data: d}
+  end
+
   defimpl Numy.Vc do
 
     def assign_zeros(v) when is_map(v) do
@@ -31,6 +36,10 @@ defmodule Numy.Vector do
 
     def assign_random(v) when is_map(v) do
       %{v | data: Numy.Float.make_list_randoms(v.nelm)}
+    end
+
+    def data(v) when is_map(v) do
+      v.data
     end
 
     def at(v, index, default \\ nil) when is_map(v) and is_integer(index) do
@@ -65,7 +74,7 @@ defmodule Numy.Vector do
       %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
     end
 
-    def multiply(v1, v2) when is_map(v1) and is_map(v2) do
+    def mul(v1, v2) when is_map(v1) and is_map(v2) do
       res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a * b end)
       %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
     end

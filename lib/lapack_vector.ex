@@ -42,6 +42,13 @@ defmodule Numy.Lapack.Vector do
     end
   end
 
+  @doc "Create new Vector as a copy of other Vector"
+  def new(%Numy.Lapack.Vector{nelm: sz, lapack: lpk} = _other_vec) do
+    new_vec = Numy.Lapack.Vector.new(sz)
+    Numy.Lapack.copy(new_vec.lapack, lpk)
+    new_vec
+  end
+
   defimpl Numy.Vc do
 
     def assign_zeros(v) when is_map(v) do
@@ -57,6 +64,10 @@ defmodule Numy.Lapack.Vector do
     def assign_random(v) when is_map(v) do
       Numy.Lapack.assign(v.lapack, Numy.Float.make_list_randoms(v.nelm))
       v
+    end
+
+    def data(v) when is_map(v) do
+      Numy.Lapack.data(v.lapack)
     end
 
     def at(v, index, default \\ nil) when is_map(v) and is_integer(index) do
@@ -82,9 +93,9 @@ defmodule Numy.Lapack.Vector do
         %Numy.Vector{data: [2.0, 4.0, 6.0], nelm: 3}
     """
     def add(v1, v2) when is_map(v1) and is_map(v2) do
-      v3 = Numy.Lapack.Vector.new(min(v1.nelm, v2.nelm))
-      Numy.Vcm.add!(v3, v2)
-      Numy.Lapack.data(v3.lapack)
+      v = Numy.Lapack.Vector.new(v1) # make a copy
+      Numy.Vcm.add!(v, v2)
+      Numy.Lapack.data(v.lapack)
     end
 
     def sub(v1, v2) when is_map(v1) and is_map(v2) do
@@ -92,7 +103,7 @@ defmodule Numy.Lapack.Vector do
       %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
     end
 
-    def multiply(v1, v2) when is_map(v1) and is_map(v2) do
+    def mul(v1, v2) when is_map(v1) and is_map(v2) do
       res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a * b end)
       %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
     end

@@ -19,6 +19,8 @@ struct Tensor
 
     uint64_t magic = MAGIC; ///< to check we are actually dealing with Tensor
 
+    enum {T_DBL, T_FLT} dtype;
+
     unsigned nrDims; ///< number of dimensions
     unsigned shape[MAX_DIMS]; ///< size of each dimension 
 

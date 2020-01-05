@@ -4,10 +4,16 @@ defmodule NumyTest do
 
   test "basic vector ops" do
     alias Numy.Vc, as: Vc
+    alias Numy.Vcm, as: Vcm
     v = Numy.Vector.new([1,2,3])
     assert Vc.close?(Vc.add(v,v), Vc.scale(v,2))
     bv = Numy.BigVector.new([1,2,3])
     assert Vc.close?(Vc.add(v,v), Vc.scale(bv,2))
+    lv = Numy.Lapack.Vector.new([1,2,3])
+    Vcm.add!(lv,lv)
+    assert Numy.Float.close?([2.0,4.0,6.0], Vc.data(lv))
+    lv = Numy.Lapack.Vector.new([1,2,3])
+    assert Numy.Float.close?([2.0,4.0,6.0], Vc.add(lv,lv))
   end
 
   test "float sign, signbit,close?" do

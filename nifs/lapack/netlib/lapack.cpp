@@ -13,6 +13,8 @@
  *
  * - Ubuntu: sudo apt install liblapacke-dev
  */
+#include <cstring>
+
 #include <erl_nif.h>
 #include <lapacke.h>
 #include <cblas.h> 
@@ -133,6 +135,7 @@ bool tensor_construct(numy::Tensor* tensor,
 
     tensor->nrDims = lenShape;
 
+    tensor->dtype = numy::Tensor::T_DBL;
     unsigned sizeOfDataType = sizeof(double);
     tensor->dataSize = tensor->nrElements * sizeOfDataType;
     tensor->data = enif_alloc(tensor->dataSize);
@@ -286,6 +289,28 @@ NUMY_ERL_FUN tensor_assign(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     return numy::tnsr::getOkAtom(env);
 }
 
+NUMY_ERL_FUN data_copy_all(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensor_dst = numy::tnsr::getTensor(env, argv[0]);
+    const numy::Tensor* tensor_src = numy::tnsr::getTensor(env, argv[1]);
+
+    if (tensor_dst == nullptr or tensor_dst->magic != numy::Tensor::MAGIC or
+        tensor_src == nullptr or tensor_src->magic != numy::Tensor::MAGIC)
+    {
+	    return enif_make_badarg(env);
+    }
+
+    unsigned size = std::min(tensor_dst->dataSize, tensor_src->dataSize);
+
+    std::memcpy(tensor_dst->data, tensor_src->data, size);
+
+    return enif_make_int(env, size);
+}
+
 //http://www.netlib.org/lapack/explore-html/d7/d3b/group__double_g_esolve_ga225c8efde208eaf246882df48e590eac.html#ga225c8efde208eaf246882df48e590eac
 NUMY_ERL_FUN numy_lapack_dgels(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -332,6 +357,7 @@ static ErlNifFunc nif_funcs[] = {
     {         "fill_tensor",   2,             tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {         "tensor_data",   2,             tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {       "tensor_assign",   2,           tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {       "data_copy_all",   2,           data_copy_all,   0},
     {          "blas_drotg",   2,         numy_blas_drotg,   0},
     {          "blas_dcopy",   5,         numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "lapack_dgels",   2,       numy_lapack_dgels,   ERL_NIF_DIRTY_JOB_CPU_BOUND},

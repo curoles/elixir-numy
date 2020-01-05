@@ -27,6 +27,7 @@ double dot_vectors(const double a[], const double b[], unsigned length)
 static inline
 void add_vectors(double a[], const double b[], unsigned length)
 {
+    #pragma GCC ivdep
     for (unsigned int i = 0; i < length; ++i) {
         a[i] += b[i];
     }

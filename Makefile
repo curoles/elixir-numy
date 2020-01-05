@@ -55,7 +55,7 @@ NUMY_LAPACK_DEPS += ./nifs/tensor/vector.hpp ./nifs/lapack/netlib/blas.hpp
 
 ${NUMY_LAPACK_LIB}: ${NUMY_LAPACK_SRC}
 	@mkdir -p ./priv
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ ${NETLIB_LAPACK_LIBS}
+	@$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ ${NETLIB_LAPACK_LIBS}
 	@ln -srf $@ priv/libnumy_lapack.so
 
 #${NUMY_VECTOR_LIB}: ${NUMY_VECTOR_SRC}

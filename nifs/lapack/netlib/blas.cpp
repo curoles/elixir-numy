@@ -52,3 +52,13 @@ NUMY_ERL_FUN numy_blas_dcopy(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
 
     return numy::tnsr::getOkAtom(env);
 }
+
+// Scale: 𝑥 ← 𝛼𝑥
+
+// axpy: 𝑦 ← 𝛼𝑥 + 𝑦
+
+// dot: dot ← 𝑥ᵀ𝑦
+
+// __dot: dot ← 𝛼 + 𝑥ᵀ𝑦
+
+// nrm2
