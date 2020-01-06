@@ -12,6 +12,7 @@ https://github.com/curoles/elixir-numy/blob/master/LICENSE)
 - [Example](#example)
 - [Comparison](#comparison)
 - [Installation](#installation)
+- [Mutable internal state](#mutable-internal-state)
 - [Linear Algebra with LAPACK](#linear-algebra-with-lapack)
   * [BLAS](#blas)
   * [LAPACK](#lapack)
@@ -66,6 +67,32 @@ def deps do
     {:numy, "~> 0.1.1"}
   ]
 end
+```
+
+## Mutable internal state
+
+For performance reasons, Numy NIF objects are mutable. That is, some API functions
+change internal state of an object. Two sets of APIs are provided, one has functions
+that change object's internal state and other that does not change it.
+In order to maintain that immutability, input/output object is copied and
+its copy is mutated.
+
+### Example of immutable addition of two vectors
+
+```elixir
+iex(1)> v = Numy.Lapack.Vector.new([1,2,3])
+iex(2)> Numy.Vc.add(v,v) # Vc API functions do not mutate internal state
+iex(3)> Numy.Vc.data(v)
+[1.0, 2.0, 3.0]
+```
+
+### Example of two vector addition when one of the vectors changes its state
+
+```elixir
+iex(1)> v = Numy.Lapack.Vector.new([1,2,3])
+iex(4)> Numy.Vcm.add!(v,v) # Vcm is API that mutates internal state, functions have suffix '!'
+iex(5)> Numy.Vc.data(v)
+[2.0, 4.0, 6.0]
 ```
 
 ## Linear Algebra BLAS

@@ -27,6 +27,8 @@ defmodule Numy.Lapack.Vector do
     :lapack  # %Numy.Lapack structure
   ]
 
+  alias Numy.Lapack.Vector, as: LVec
+
   def new(nelm) when is_integer(nelm) do
     %Numy.Lapack.Vector{nelm: nelm, lapack: Numy.Lapack.new_tensor([nelm])}
   end
@@ -80,7 +82,7 @@ defmodule Numy.Lapack.Vector do
     end
 
     def close?(v1,v2) when is_map(v1) and is_map(v2) do
-      Numy.Float.close?(v1.lapack.data, v2.lapack.data)
+      Numy.Float.close?(v1.lapack.data, v2.lapack.data) #todo native
     end
 
     @doc """
@@ -94,24 +96,19 @@ defmodule Numy.Lapack.Vector do
         %Numy.Vector{data: [2.0, 4.0, 6.0], nelm: 3}
     """
     def add(v1, v2) when is_map(v1) and is_map(v2) do
-      v = Numy.Lapack.Vector.new(v1) # make a copy
-      Numy.Vcm.add!(v, v2)
-      Numy.Lapack.data(v.lapack)
+      Numy.Vcm.add!(LVec.new(v1), v2)
     end
 
     def sub(v1, v2) when is_map(v1) and is_map(v2) do
-      res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a - b end)
-      %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
+      Numy.Vcm.sub!(LVec.new(v1), v2)
     end
 
     def mul(v1, v2) when is_map(v1) and is_map(v2) do
-      res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a * b end)
-      %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
+      Numy.Vcm.mul!(LVec.new(v1), v2)
     end
 
     def div(v1, v2) when is_map(v1) and is_map(v2) do
-      res = Enum.zip(v1.data,v2.data) |> Enum.map(fn {a,b} -> a / b end)
-      %Numy.Vector{nelm: min(v1.nelm,v2.nelm), data: res}
+      Numy.Vcm.div!(LVec.new(v1), v2)
     end
 
     def scale(v, factor) when is_map(v) and is_number(factor) do
@@ -175,10 +172,37 @@ defmodule Numy.Lapack.Vector do
 
   defimpl Numy.Vcm do
 
-    @doc "dsafdfadsf"
     def add!(v1,v2) when is_map(v1) and is_map(v2) do
       try do
         Numy.Lapack.vector_add(v1.lapack.nif_resource, v2.lapack.nif_resource)
+        v1
+      rescue
+        _ -> :error
+      end
+    end
+
+    def sub!(v1,v2) when is_map(v1) and is_map(v2) do
+      try do
+        Numy.Lapack.vector_sub(v1.lapack.nif_resource, v2.lapack.nif_resource)
+        v1
+      rescue
+        _ -> :error
+      end
+    end
+
+    def mul!(v1,v2) when is_map(v1) and is_map(v2) do
+      try do
+        Numy.Lapack.vector_mul(v1.lapack.nif_resource, v2.lapack.nif_resource)
+        v1
+      rescue
+        _ -> :error
+      end
+    end
+
+    def div!(v1,v2) when is_map(v1) and is_map(v2) do
+      try do
+        Numy.Lapack.vector_div(v1.lapack.nif_resource, v2.lapack.nif_resource)
+        v1
       rescue
         _ -> :error
       end

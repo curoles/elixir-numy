@@ -194,6 +194,18 @@ defmodule Numy.Lapack do
     raise "vector_add/2 not implemented"
   end
 
+  def vector_sub(_tensor_a, _tensor_b) do
+    raise "vector_sub/2 not implemented"
+  end
+
+  def vector_mul(_tensor_a, _tensor_b) do
+    raise "vector_mul/2 not implemented"
+  end
+
+  def vector_div(_tensor_a, _tensor_b) do
+    raise "vector_div/2 not implemented"
+  end
+
   def vector_dot(_tensor_a, _tensor_b) do
     raise "vector_dot/2 not implemented"
   end

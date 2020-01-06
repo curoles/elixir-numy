@@ -33,6 +33,33 @@ void add_vectors(double a[], const double b[], unsigned length)
     }
 }
 
+static inline
+void sub_vectors(double a[], const double b[], unsigned length)
+{
+    #pragma GCC ivdep
+    for (unsigned int i = 0; i < length; ++i) {
+        a[i] -= b[i];
+    }
+}
+
+static inline
+void mul_vectors(double a[], const double b[], unsigned length)
+{
+    #pragma GCC ivdep
+    for (unsigned int i = 0; i < length; ++i) {
+        a[i] *= b[i];
+    }
+}
+
+static inline
+void div_vectors(double a[], const double b[], unsigned length)
+{
+    #pragma GCC ivdep
+    for (unsigned int i = 0; i < length; ++i) {
+        a[i] += b[i];
+    }
+}
+
 /**
  * Copy Erlang list to C array. 
  * 
@@ -87,7 +114,11 @@ ERL_NIF_TERM numy_vector_dot_product(ErlNifEnv* env, int argc, const ERL_NIF_TER
     return retVal;
 }
 
-ERL_NIF_TERM numy_vector_add(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+using VectorFunOP2 = void (*)(double a[], const double b[], unsigned length);
+
+static
+ERL_NIF_TERM numy_vector__op2(ErlNifEnv* env, int argc,
+    const ERL_NIF_TERM argv[], VectorFunOP2 op)
 {
     if (argc != 2) {
         return enif_make_badarg(env);
@@ -107,9 +138,25 @@ ERL_NIF_TERM numy_vector_add(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
     double* vector1 = (double*) tensor1->data;
     double* vector2 = (double*) tensor2->data;
 
-    add_vectors(vector1, vector2, length);
+    op(vector1, vector2, length);
 
     return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_add(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    return numy_vector__op2(env, argc, argv, add_vectors);
+}
+
+ERL_NIF_TERM numy_vector_sub(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    return numy_vector__op2(env, argc, argv, sub_vectors);
+}
+
+ERL_NIF_TERM numy_vector_mul(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    return numy_vector__op2(env, argc, argv, mul_vectors);
+}
+
+ERL_NIF_TERM numy_vector_div(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    return numy_vector__op2(env, argc, argv, div_vectors);
 }
 
 ERL_NIF_TERM numy_vector_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])

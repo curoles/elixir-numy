@@ -103,8 +103,12 @@ defprotocol Numy.Vcm do
   """
 
   @doc """
-  Add two vectors, v1 = v1 + v2.
+  Mutate a vector by adding other to it, v1 = v1 + v2.
+  Return mutated vector.
   """
   def add!(v1, v2)
 
+  def sub!(v1, v2)
+  def mul!(v1, v2)
+  def div!(v1, v2)
 end

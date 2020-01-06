@@ -21,16 +21,18 @@ defmodule NumyTest do
     Vcm.add!(lv,lv)
     assert Numy.Float.close?([2.0,4.0,6.0], Vc.data(lv))
     lv = Numy.Lapack.Vector.new([1,2,3])
-    assert Numy.Float.close?([2.0,4.0,6.0], Vc.add(lv,lv))
+    assert Numy.Float.close?([2.0,4.0,6.0], Vc.add(lv,lv) |> Vc.data)
   end
 
   test "vector ops" do
     alias Numy.Vc, as: Vc
     #alias Numy.Vcm, as: Vcm
-    list = Enum.to_list(0..99_999)
-    v = Numy.Vector.new(list)
-    lv = Numy.Lapack.Vector.new(list)
+    l = Enum.to_list(0..99_999)
+    v = Numy.Vector.new(l)
+    lv = Numy.Lapack.Vector.new(l)
     assert Vc.at(v, 12345) == Vc.at(lv, 12345)
+    lv2 = Vc.add(lv,lv) |> Vc.sub(lv)
+    #todo assert Vc.close?(lv, lv2)
   end
 
   test "lapack LLS QR" do
