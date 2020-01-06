@@ -12,6 +12,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Install make and C compiler
+      run: sudo apt install build-essential
+    - name: Install LAPACK
+      run: sudo apt install liblapacke-dev gfortran
     - name: Install Dependencies
       run: |
         mix local.rebar --force

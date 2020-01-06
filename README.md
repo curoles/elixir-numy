@@ -2,6 +2,8 @@
 [![hex.pm version](https://img.shields.io/hexpm/v/numy.svg)](https://hex.pm/packages/numy)
 [![Build Status](https://travis-ci.org/curoles/elixir-numy.svg?branch=master)](
 https://travis-ci.org/curoles/elixir-numy)
+[![Workflow](https://github.com/curoles/elixir-numy/workflows/Elixir%20CI/badge.svg)](
+https://github.com/curoles/elixir-numy/actions)
 [![hex.pm](https://img.shields.io/hexpm/l/numy.svg)](
 https://github.com/curoles/elixir-numy/blob/master/LICENSE)
 
