@@ -30,7 +30,8 @@ struct Tensor
     unsigned dataSize; /// size of data in bytes
 
     inline bool isValid() const {
-        return nrDims > 0 and nrDims < MAX_DIMS and data != nullptr;
+        return nrDims > 0 and nrDims < MAX_DIMS and
+               magic == MAGIC and data != nullptr;
     }
 
     inline unsigned nr_cols() const {

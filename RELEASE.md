@@ -1,6 +1,14 @@
 # Releases
 
-## 0.1.0 (01/01/20) Fixing 1st release
+## 0.1.2 (01/xx/20) basic vector operations
+
+- vector ops protocol `Numy.Vc`
+- protocol `Numy.Vcm` for ops that mutate vector state
+- module `Numy.Vector` with generic implementation
+- experimental module `Numy.BigVector` with Flow, results are bad now
+- module `Numy.Lapack.Vector` that implements `Numy.Vc` and `Numy.Vcm`
+
+## 0.1.1 (01/01/20) Fixing 1st release
 
 Fix how .so files are searched
 

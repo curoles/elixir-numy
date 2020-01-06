@@ -1,5 +1,4 @@
 language: elixir
-sudo: false
 elixir:
   - '1.9.4'
 otp_release:
@@ -7,6 +6,7 @@ otp_release:
 env:
   - MIX_ENV=test
 script: mix test
+os: linux
 dist: bionic
 before_install:
   - sudo apt-get -y install liblapacke-dev gfortran

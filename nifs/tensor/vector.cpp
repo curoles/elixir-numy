@@ -111,3 +111,31 @@ ERL_NIF_TERM numy_vector_add(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
 
     return numy::tnsr::getOkAtom(env);
 }
+
+ERL_NIF_TERM numy_vector_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    int index{0};
+    if (!enif_get_int(env, argv[1], &index)) {
+        return enif_make_badarg(env);
+    }
+
+    if (index < 0 or index >= (int)tensor->nrElements) {
+        return enif_make_badarg(env);
+    }
+
+    double* data = (double*) tensor->data;
+
+    double val = data[index];
+
+    return enif_make_double(env, val);
+}

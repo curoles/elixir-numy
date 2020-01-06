@@ -2,7 +2,15 @@ defmodule NumyTest do
   use ExUnit.Case
   doctest Numy
 
-  test "basic vector ops" do
+  test "float sign, signbit,close?" do
+    import Numy.Float
+    assert sign(7.8748247) == 1 and sign(-7.656521) == -1 and sign(0.0) == 0
+    assert signbit(0.0) == false and signbit(-0.0067424) == true and signbit(7471624.8741824) == false
+    assert close?(-0.01, -0.01) == true and close?(-0.01, -0.02) == false and close?(-0.01, 0.01) == false
+    assert close?(-0.01, -0.01000001, 0.000000001) == false and close?(-0.01, -0.01000001, 0.0001) == true
+  end
+
+  test "vector add" do
     alias Numy.Vc, as: Vc
     alias Numy.Vcm, as: Vcm
     v = Numy.Vector.new([1,2,3])
@@ -16,12 +24,13 @@ defmodule NumyTest do
     assert Numy.Float.close?([2.0,4.0,6.0], Vc.add(lv,lv))
   end
 
-  test "float sign, signbit,close?" do
-    import Numy.Float
-    assert sign(7.8748247) == 1 and sign(-7.656521) == -1 and sign(0.0) == 0
-    assert signbit(0.0) == false and signbit(-0.0067424) == true and signbit(7471624.8741824) == false
-    assert close?(-0.01, -0.01) == true and close?(-0.01, -0.02) == false and close?(-0.01, 0.01) == false
-    assert close?(-0.01, -0.01000001, 0.000000001) == false and close?(-0.01, -0.01000001, 0.0001) == true
+  test "vector ops" do
+    alias Numy.Vc, as: Vc
+    #alias Numy.Vcm, as: Vcm
+    list = Enum.to_list(0..99_999)
+    v = Numy.Vector.new(list)
+    lv = Numy.Lapack.Vector.new(list)
+    assert Vc.at(v, 12345) == Vc.at(lv, 12345)
   end
 
   test "lapack LLS QR" do

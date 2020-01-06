@@ -362,7 +362,8 @@ static ErlNifFunc nif_funcs[] = {
     {          "blas_dcopy",   5,         numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "lapack_dgels",   2,       numy_lapack_dgels,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_add",   2,         numy_vector_add,   0},
-    {          "vector_dot",   2, numy_vector_dot_product,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {          "vector_dot",   2, numy_vector_dot_product,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {           "vector_at",   2,          numy_vector_at,   0},
 
 };
 

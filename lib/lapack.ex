@@ -198,6 +198,11 @@ defmodule Numy.Lapack do
     raise "vector_dot/2 not implemented"
   end
 
+  @doc "If all data is viewed as a vector, get element in certain position."
+  def vector_at(_tensor, _index) do
+    raise "vector_at/2 not implemented"
+  end
+
   @doc "Deep copy of all elements regardless of shape and data type."
   def data_copy_all(_tensor_a, _tensor_b) do
     raise "data_copy_all/2 not implemented"
