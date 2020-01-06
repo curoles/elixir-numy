@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Update package manager
+      run: apt-get update
     - name: Install make and C compiler
       run: apt-get install build-essential
     - name: Install LAPACK
