@@ -269,6 +269,7 @@ private:
 	FloatingPointUnion u_;
 };
 
+#include <cfloat>
 // We cannot use std::numeric_limits<T>::max() as it clashes with the max()
 // macro defined by <windows.h>.
 template <>

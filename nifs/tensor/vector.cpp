@@ -12,6 +12,8 @@
 #include "tensor/tensor.hpp"
 #include "tensor/nif_resource.hpp"
 
+#include "float_almost_equals.hpp"
+
 #define UNUSED __attribute__((unused))
 
 static inline
@@ -60,6 +62,16 @@ void div_vectors(double a[], const double b[], unsigned length)
     }
 }
 
+static inline
+bool vectors_equal(double a[], const double b[], unsigned length)
+{
+    for (unsigned int i = 0; i < length; ++i) {
+        if (!AlmostEquals(a[i], b[i])) return false;
+    }
+
+    return true;
+}
+
 /**
  * Copy Erlang list to C array. 
  * 
@@ -89,27 +101,39 @@ bool make_carray_from_list(ErlNifEnv* env, ERL_NIF_TERM list, double outVector[]
     return true;
 }
 
-ERL_NIF_TERM numy_vector_dot_product(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+static inline
+bool two_vectors_argv(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[],
+    numy::Tensor*& tensor1, numy::Tensor*& tensor2)
 {
     if (argc != 2) {
-        return enif_make_badarg(env);
+        return false;
     }
 
-    const numy::Tensor* tensor1 = numy::tnsr::getTensor(env, argv[0]);
-    const numy::Tensor* tensor2 = numy::tnsr::getTensor(env, argv[1]);
+    tensor1 = numy::tnsr::getTensor(env, argv[0]);
+    tensor2 = numy::tnsr::getTensor(env, argv[1]);
 
-    if (tensor1 == nullptr or tensor1->magic != numy::Tensor::MAGIC or
-        tensor2 == nullptr or tensor2->magic != numy::Tensor::MAGIC)
+    if (tensor1 == nullptr or !tensor1->isValid() or
+        tensor2 == nullptr or !tensor2->isValid())
     {
-	    return enif_make_badarg(env);
+	    return false;
+    }
+
+    return true;
+}
+
+ERL_NIF_TERM numy_vector_dot_product(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    numy::Tensor* tensor1 {nullptr};
+    numy::Tensor* tensor2 {nullptr};
+
+    if (!two_vectors_argv(env, argc, argv, tensor1, tensor2)) {
+        return enif_make_badarg(env);
     }
 
     unsigned int length = std::min(tensor1->nrElements, tensor2->nrElements);
 
-    double* vector1 = (double*) tensor1->data;
-    double* vector2 = (double*) tensor2->data;
-
-    ERL_NIF_TERM retVal = enif_make_double(env, dot_vectors(vector1, vector2, length));
+    ERL_NIF_TERM retVal = enif_make_double(env,
+        dot_vectors(tensor1->dbl_data(), tensor2->dbl_data(), length));
 
     return retVal;
 }
@@ -120,25 +144,16 @@ static
 ERL_NIF_TERM numy_vector__op2(ErlNifEnv* env, int argc,
     const ERL_NIF_TERM argv[], VectorFunOP2 op)
 {
-    if (argc != 2) {
+    numy::Tensor* tensor1 {nullptr};
+    numy::Tensor* tensor2 {nullptr};
+
+    if (!two_vectors_argv(env, argc, argv, tensor1, tensor2)) {
         return enif_make_badarg(env);
-    }
-
-    const numy::Tensor* tensor1 = numy::tnsr::getTensor(env, argv[0]);
-    const numy::Tensor* tensor2 = numy::tnsr::getTensor(env, argv[1]);
-
-    if (tensor1 == nullptr or tensor1->magic != numy::Tensor::MAGIC or
-        tensor2 == nullptr or tensor2->magic != numy::Tensor::MAGIC)
-    {
-	    return enif_make_badarg(env);
     }
 
     unsigned int length = std::min(tensor1->nrElements, tensor2->nrElements);
 
-    double* vector1 = (double*) tensor1->data;
-    double* vector2 = (double*) tensor2->data;
-
-    op(vector1, vector2, length);
+    op(tensor1->dbl_data(), tensor2->dbl_data(), length);
 
     return numy::tnsr::getOkAtom(env);
 }
@@ -180,9 +195,25 @@ ERL_NIF_TERM numy_vector_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
-    double* data = (double*) tensor->data;
+    const double* data = (double*) tensor->data;
 
     double val = data[index];
 
     return enif_make_double(env, val);
+}
+
+ERL_NIF_TERM numy_vector_equal(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    numy::Tensor* tensor1 {nullptr};
+    numy::Tensor* tensor2 {nullptr};
+
+    if (!two_vectors_argv(env, argc, argv, tensor1, tensor2)) {
+        return enif_make_badarg(env);
+    }
+
+    unsigned int length = std::min(tensor1->nrElements, tensor2->nrElements);
+
+    bool equal = vectors_equal(tensor1->dbl_data(), tensor2->dbl_data(), length);
+
+    return numy::tnsr::getBoolAtom(env, equal);
 }

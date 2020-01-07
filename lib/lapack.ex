@@ -215,6 +215,11 @@ defmodule Numy.Lapack do
     raise "vector_at/2 not implemented"
   end
 
+  @doc "Compare elements of 2 vectors for equality"
+  def vector_equal(_tensor_a, _tensor_b) do
+    raise "vector_equal/2 not implemented"
+  end
+
   @doc "Deep copy of all elements regardless of shape and data type."
   def data_copy_all(_tensor_a, _tensor_b) do
     raise "data_copy_all/2 not implemented"

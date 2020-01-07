@@ -53,7 +53,7 @@ defprotocol Numy.Vc do
   def at(v, index, default \\ nil)
 
   @doc "Check if elements of 2 vectors are practically the same."
-  def close?(v1,v2)
+  def equal?(v1,v2)
 
   @doc "Add 2 vectors, cᵢ ← aᵢ + bᵢ"
   def add(v1, v2)

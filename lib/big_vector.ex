@@ -50,8 +50,8 @@ defmodule Numy.BigVector do
       v.nelm == 0
     end
 
-    def close?(v1,v2) when is_map(v1) and is_map(v2) do
-      Numy.Float.close?(v1.data, v2.data)
+    def equal?(v1,v2) when is_map(v1) and is_map(v2) do
+      Numy.Float.equal?(v1.data, v2.data)
     end
 
     @doc """

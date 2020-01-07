@@ -81,8 +81,8 @@ defmodule Numy.Lapack.Vector do
       v.nelm == 0
     end
 
-    def close?(v1,v2) when is_map(v1) and is_map(v2) do
-      Numy.Float.close?(v1.lapack.data, v2.lapack.data) #todo native
+    def equal?(v1,v2) when is_map(v1) and is_map(v2) do
+      Numy.Lapack.vector_equal(v1.lapack.nif_resource, v2.lapack.nif_resource)
     end
 
     @doc """

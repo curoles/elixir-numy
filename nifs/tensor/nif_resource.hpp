@@ -25,7 +25,7 @@ private:
     ResType res_type_ = nullptr;
 
 public:
-    ERL_NIF_TERM ok_atom_;
+    ERL_NIF_TERM ok_atom_, true_atom_, false_atom_;
 
 public:
     /**
@@ -35,6 +35,9 @@ public:
     ResType open(ErlNifEnv* env)
     {
         ok_atom_ = enif_make_atom(env, "ok");
+        true_atom_ = enif_make_atom(env, "true");
+        false_atom_ = enif_make_atom(env, "false");
+
 
         res_type_ = enif_open_resource_type(
             env,
@@ -85,6 +88,18 @@ numy::Tensor* getTensor(ErlNifEnv* env, const ERL_NIF_TERM nifTensor) {
 
 static inline ERL_NIF_TERM getOkAtom(ErlNifEnv* env) {
     return ((NIFResource*) enif_priv_data(env))->ok_atom_;
+}
+
+static inline ERL_NIF_TERM getTrueAtom(ErlNifEnv* env) {
+    return ((NIFResource*) enif_priv_data(env))->true_atom_;
+}
+
+static inline ERL_NIF_TERM getFalseAtom(ErlNifEnv* env) {
+    return ((NIFResource*) enif_priv_data(env))->false_atom_;
+}
+
+static inline ERL_NIF_TERM getBoolAtom(ErlNifEnv* env, bool truth) {
+    return truth ? getTrueAtom(env) : getFalseAtom(env);
 }
 
 } // namespace numy::tnsr

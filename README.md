@@ -45,7 +45,7 @@ iex(5)> Numy.Lapack.solve_lls(a,b)
 iex(6)> solution = Numy.Lapack.data(b,2*3)
 [1.9999999999999982, 0.9999999999999983, 0.9999999999999991, 0.9999999999999997,
  1.0000000000000024, 2.0000000000000018]
-iex(7)> Numy.Float.close?(solution, [[2,1], [1,1], [1,2]])
+iex(7)> Numy.Float.equal?(solution, [[2,1], [1,1], [1,2]])
 true
 ```
 

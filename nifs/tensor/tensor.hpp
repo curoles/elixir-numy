@@ -41,6 +41,8 @@ struct Tensor
     inline unsigned nr_rows() const {
         return (nrDims == 1)? 1u : shape[1];
     }
+
+    inline double* dbl_data() { return (double*) data; }
 };
 
 } // end of namespace numy
