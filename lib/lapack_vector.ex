@@ -125,44 +125,45 @@ defmodule Numy.Lapack.Vector do
 
     @doc "Sum of all elements, ∑aᵢ"
     def sum(v) do
-      Enum.sum(v.data)
+      Numy.Lapack.vector_sum(v.lapack.nif_resource)
     end
 
     @doc "Average (∑aᵢ)/length"
-    def average(%Numy.Vector{nelm: nelm, data: _}) when nelm == 0, do: 0.0
+    def average(%Numy.Vector{nelm: nelm, data: _}) when nelm == 0 do
+      raise "empty vector";
+    end
     def average(%Numy.Vector{nelm: nelm, data: _} = v) do
-      Enum.sum(v.data) / nelm
+      Numy.Vc.sum(v) / nelm
     end
 
     @doc "Return max value"
-    def max(v), do: Enum.max(v.data)
+    def max(v) when is_map(v) do
+      Numy.Lapack.vector_max(v.lapack.nif_resource)
+    end
 
     @doc "Return min value"
-    def min(v), do: Enum.min(v.data)
+    def min(v) when is_map(v) do
+      Numy.Lapack.vector_min(v.lapack.nif_resource)
+    end
 
     @doc "Return index of max value"
     def max_index(v) when is_map(v) do
-      max_val = Numy.Vc.max(v)
-      Enum.find_index(v.data, fn x -> x == max_val end)
+      Numy.Lapack.vector_max_index(v.lapack.nif_resource)
     end
 
     @doc "Return index of min value"
     def min_index(v) when is_map(v) do
-      min_val = Numy.Vc.min(v)
-      Enum.find_index(v.data, fn x -> x == min_val end)
+      Numy.Lapack.vector_min_index(v.lapack.nif_resource)
     end
 
     @doc "Step function, aᵢ ← 0 if aᵢ < 0 else 1"
-    def apply_heaviside(v, cutoff \\ 0.0) when is_map(v) do
-      res = Enum.map(v.data, fn x -> if (x < cutoff), do: 0.0, else: 1.0 end)
-      %{v | data: res}
+    def apply_heaviside(v, cutoff \\ 0.0) when is_map(v) and is_number(cutoff) do
+      Numy.Vcm.apply_heaviside!(LVec.new(v), cutoff)
     end
 
     @doc "f(x) = 1/(1 + e⁻ˣ)"
     def apply_sigmoid(v) when is_map(v) do
-      sigmoid = fn x -> (1.0/(1.0 + :math.exp(-x))) end
-      res = Enum.map(v.ata, fn x -> sigmoid.(x) end)
-      %{v | data: res}
+      Numy.Vcm.apply_sigmoid!(LVec.new(v))
     end
 
   end # defimpl Numy.Vc
@@ -218,6 +219,24 @@ defmodule Numy.Lapack.Vector do
     def offset!(v, factor) when is_map(v) and is_number(factor) do
       try do
         Numy.Lapack.vector_offset(v.lapack.nif_resource, factor)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def apply_heaviside!(v, cutoff) when is_map(v) and is_number(cutoff) do
+      try do
+        Numy.Lapack.vector_heaviside(v.lapack.nif_resource, cutoff)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def apply_sigmoid!(v) when is_map(v) do
+      try do
+        Numy.Lapack.vector_sigmoid(v.lapack.nif_resource)
         v
       rescue
         _ -> :error

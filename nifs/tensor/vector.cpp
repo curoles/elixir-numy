@@ -5,7 +5,10 @@
  * @copyright Igor Lesik 2019
  *
  */
+#include "vector.hpp"
+
 #include <algorithm>
+#include <cmath>
 
 #include <erl_nif.h>
 
@@ -70,6 +73,51 @@ bool vectors_equal(double a[], const double b[], unsigned length)
     }
 
     return true;
+}
+
+static inline
+double vector_sum(double a[], unsigned length)
+{
+    double sum {0.0};
+
+    #pragma GCC ivdep
+    for (unsigned int i = 0; i < length; ++i) {
+        sum += a[i];
+    }
+
+    return sum;
+}
+
+static inline
+int vector_max(double a[], unsigned length)
+{
+    int pos {-1};
+    double max_val {a[0]};
+
+    for (unsigned int i = 0; i < length; ++i) {
+        if (a[i] > max_val) {
+            pos = i;
+            max_val = a[i];
+        }
+    }
+
+    return pos;
+}
+
+static inline
+int vector_min(double a[], unsigned length)
+{
+    int pos {-1};
+    double min_val {a[0]};
+
+    for (unsigned int i = 0; i < length; ++i) {
+        if (a[i] < min_val) {
+            pos = i;
+            min_val = a[i];
+        }
+    }
+
+    return pos;
 }
 
 /**
@@ -145,7 +193,7 @@ bool vector_fnum_argv(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[],
     return true;
 }
 
-ERL_NIF_TERM numy_vector_dot_product(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+ERL_NIF_TERM numy_vector_dot(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     numy::Tensor* tensor1 {nullptr};
     numy::Tensor* tensor2 {nullptr};
@@ -275,6 +323,140 @@ ERL_NIF_TERM numy_vector_offset(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
     #pragma GCC ivdep
     for (unsigned i = 0; i < tensor->nrElements; ++i) {
         data[i] += off;
+    }
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_sum(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    return enif_make_double(env, vector_sum(tensor->dbl_data(), tensor->nrElements));
+}
+
+ERL_NIF_TERM numy_vector_max(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid() or tensor->nrElements == 0) {
+	    return enif_make_badarg(env);
+    }
+
+    double* data = tensor->dbl_data();
+    int pos = vector_max(data, tensor->nrElements);
+
+    if (pos < 0 or pos >= (int)tensor->nrElements) {
+        enif_raise_exception(env, enif_make_atom(env, "error"));
+    }
+
+    return enif_make_double(env, data[pos]);
+}
+
+ERL_NIF_TERM numy_vector_min(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid() or tensor->nrElements == 0) {
+	    return enif_make_badarg(env);
+    }
+
+    double* data = tensor->dbl_data();
+    int pos = vector_min(data, tensor->nrElements);
+
+    if (pos < 0 or pos >= (int)tensor->nrElements) {
+        enif_raise_exception(env, enif_make_atom(env, "error"));
+    }
+
+    return enif_make_double(env, data[pos]);
+}
+
+ERL_NIF_TERM numy_vector_max_index(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid() or tensor->nrElements == 0) {
+	    return enif_make_badarg(env);
+    }
+
+    int pos = vector_max(tensor->dbl_data(), tensor->nrElements);
+
+    return enif_make_int(env, pos);
+}
+
+ERL_NIF_TERM numy_vector_min_index(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid() or tensor->nrElements == 0) {
+	    return enif_make_badarg(env);
+    }
+
+    int pos = vector_min(tensor->dbl_data(), tensor->nrElements);
+
+    return enif_make_int(env, pos);
+}
+
+ERL_NIF_TERM numy_vector_heaviside(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    numy::Tensor* tensor {nullptr};
+    double cutoff {0.0};
+
+    if (!vector_fnum_argv(env, argc, argv, tensor, cutoff)) {
+        return enif_make_badarg(env);
+    }
+
+    double* x = tensor->dbl_data();
+
+    #pragma GCC ivdep
+    for (unsigned i = 0; i < tensor->nrElements; ++i) {
+        x[i] = (x[i] < cutoff)? 0.0 : 1.0;
+    }
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_sigmoid(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    double* x = tensor->dbl_data();
+
+    #pragma GCC ivdep
+    for (unsigned i = 0; i < tensor->nrElements; ++i) {
+        x[i] = 1.0 / (1.0 + exp(-x[i]));
     }
 
     return numy::tnsr::getOkAtom(env);

@@ -365,11 +365,19 @@ static ErlNifFunc nif_funcs[] = {
     {          "vector_sub",   2,         numy_vector_sub,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_mul",   2,         numy_vector_mul,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_div",   2,         numy_vector_div,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {          "vector_dot",   2, numy_vector_dot_product,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_dot",   2,         numy_vector_dot,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {           "vector_at",   2,          numy_vector_at,   0},
     {        "vector_equal",   2,       numy_vector_equal,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "vector_scale",   2,       numy_vector_scale,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {       "vector_offset",   2,      numy_vector_offset,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {       "vector_offset",   2,      numy_vector_offset,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_dot",   2,         numy_vector_dot,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_sum",   1,         numy_vector_sum,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_max",   1,         numy_vector_max,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_min",   1,         numy_vector_min,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {    "vector_max_index",   1,   numy_vector_max_index,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {    "vector_min_index",   1,   numy_vector_min_index,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {    "vector_heaviside",   2,   numy_vector_heaviside,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {      "vector_sigmoid",   1,     numy_vector_sigmoid,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
 };
 
 // Performs all the magic needed to actually hook things up.

@@ -233,6 +233,34 @@ defmodule Numy.Lapack do
     raise "data_copy_all/2 not implemented"
   end
 
+  def vector_sum(_tensor) do
+    raise "vector_sum/1 not implemented"
+  end
+
+  def vector_max(_tensor) do
+    raise "vector_max/1 not implemented"
+  end
+
+  def vector_min(_tensor) do
+    raise "vector_min/1 not implemented"
+  end
+
+  def vector_max_index(_tensor) do
+    raise "vector_max_index/1 not implemented"
+  end
+
+  def vector_min_index(_tensor) do
+    raise "vector_min_index/1 not implemented"
+  end
+
+  def vector_heaviside(_tensor, _cutoff) do
+    raise "vector_heaviside/2 not implemented"
+  end
+
+  def vector_sigmoid(_tensor) do
+    raise "vector_sigmoid/1 not implemented"
+  end
+
   def copy(tensor_dst, tensor_src) when is_map(tensor_dst) and is_map(tensor_src) do
     try do
       data_copy_all(tensor_dst.nif_resource, tensor_src.nif_resource)

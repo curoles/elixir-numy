@@ -117,4 +117,9 @@ defprotocol Numy.Vcm do
   @doc "Add a constant to each element, aᵢ ← aᵢ + offset"
   def offset!(v, off)
 
+  @doc "Step function, aᵢ ← 0 if aᵢ < 0 else 1"
+  def apply_heaviside!(v, cutoff \\ 0.0)
+  @doc "f(x) = 1/(1 + e⁻ˣ)"
+  def apply_sigmoid!(v)
+
 end
