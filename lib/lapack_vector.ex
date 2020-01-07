@@ -120,7 +120,7 @@ defmodule Numy.Lapack.Vector do
     end
 
     def dot(v1, v2) when is_map(v1) and is_map(v2) do
-      Numy.Enumy.dot_product(v1.data, v2.data)
+      Numy.Lapack.vector_dot(v1.lapack.nif_resource, v2.lapack.nif_resource)
     end
 
     @doc "Sum of all elements, ∑aᵢ"

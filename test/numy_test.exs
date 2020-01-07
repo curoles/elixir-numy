@@ -29,10 +29,10 @@ defmodule NumyTest do
   test "vector ops" do
     alias Numy.Vc, as: Vc
     alias Numy.Vcm, as: Vcm
-    l = Enum.to_list(0..99_999)
+    l = Enum.to_list(0..999)
     v = Numy.Vector.new(l)
     lv = Numy.Lapack.Vector.new(l)
-    assert Vc.at(v, 12345) == Vc.at(lv, 12345)
+    assert Vc.at(v, 123) == Vc.at(lv, 123)
     lv2 = Vc.add(lv,lv) |> Vc.sub(lv)
     assert Vc.equal?(lv, lv2)
     lv2 = Numy.Lapack.Vector.new(lv)
@@ -41,6 +41,23 @@ defmodule NumyTest do
     assert Vc.equal?(lv, lv2)
     assert Numy.Float.equal?(Vc.scale(v, 3.71) |> Vc.data, Vc.scale(lv, 3.71) |> Vc.data())
     assert Numy.Float.equal?(Vc.offset(v, 3.71) |> Vc.data, Vc.offset(lv, 3.71) |> Vc.data())
+  end
+
+  test "vector min/max" do
+    alias Numy.Vc, as: Vc
+    #alias Numy.Vcm, as: Vcm
+    alias Numy.Float, as: F
+    l = Enum.to_list(0..999)
+    v = Numy.Vector.new(l)
+    lv = Numy.Lapack.Vector.new(l)
+    assert F.equal?(Vc.max(v), Vc.max(lv))
+    assert F.equal?(Vc.min(v), Vc.min(lv))
+    assert Vc.max_index(v) == Vc.max_index(lv)
+    assert Vc.min_index(v) == Vc.min_index(lv)
+    assert F.equal?(Vc.dot(v,v), Vc.dot(lv,lv))
+    assert F.equal?(Vc.sum(v), Vc.sum(lv))
+    assert F.equal?(Vc.apply_heaviside(v) |> Vc.data, Vc.apply_heaviside(lv) |> Vc.data())
+    assert F.equal?(Vc.apply_sigmoid(v) |> Vc.data, Vc.apply_sigmoid(lv) |> Vc.data())
   end
 
   test "lapack LLS QR" do

@@ -89,9 +89,9 @@ double vector_sum(double a[], unsigned length)
 }
 
 static inline
-int vector_max(double a[], unsigned length)
+unsigned int vector_max(double a[], unsigned length)
 {
-    int pos {-1};
+    unsigned int pos {0};
     double max_val {a[0]};
 
     for (unsigned int i = 0; i < length; ++i) {
@@ -105,9 +105,9 @@ int vector_max(double a[], unsigned length)
 }
 
 static inline
-int vector_min(double a[], unsigned length)
+unsigned int vector_min(double a[], unsigned length)
 {
-    int pos {-1};
+    unsigned int pos {0};
     double min_val {a[0]};
 
     for (unsigned int i = 0; i < length; ++i) {
@@ -356,9 +356,9 @@ ERL_NIF_TERM numy_vector_max(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
     }
 
     double* data = tensor->dbl_data();
-    int pos = vector_max(data, tensor->nrElements);
+    unsigned int pos = vector_max(data, tensor->nrElements);
 
-    if (pos < 0 or pos >= (int)tensor->nrElements) {
+    if (pos >= tensor->nrElements) {
         enif_raise_exception(env, enif_make_atom(env, "error"));
     }
 
@@ -378,9 +378,9 @@ ERL_NIF_TERM numy_vector_min(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
     }
 
     double* data = tensor->dbl_data();
-    int pos = vector_min(data, tensor->nrElements);
+    unsigned int pos = vector_min(data, tensor->nrElements);
 
-    if (pos < 0 or pos >= (int)tensor->nrElements) {
+    if (pos >= tensor->nrElements) {
         enif_raise_exception(env, enif_make_atom(env, "error"));
     }
 
@@ -399,7 +399,7 @@ ERL_NIF_TERM numy_vector_max_index(ErlNifEnv* env, int argc, const ERL_NIF_TERM 
 	    return enif_make_badarg(env);
     }
 
-    int pos = vector_max(tensor->dbl_data(), tensor->nrElements);
+    unsigned int pos = vector_max(tensor->dbl_data(), tensor->nrElements);
 
     return enif_make_int(env, pos);
 }
@@ -416,7 +416,7 @@ ERL_NIF_TERM numy_vector_min_index(ErlNifEnv* env, int argc, const ERL_NIF_TERM 
 	    return enif_make_badarg(env);
     }
 
-    int pos = vector_min(tensor->dbl_data(), tensor->nrElements);
+    unsigned int pos = vector_min(tensor->dbl_data(), tensor->nrElements);
 
     return enif_make_int(env, pos);
 }

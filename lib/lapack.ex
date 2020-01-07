@@ -253,7 +253,7 @@ defmodule Numy.Lapack do
     raise "vector_min_index/1 not implemented"
   end
 
-  def vector_heaviside(_tensor, _cutoff) do
+  def vector_heaviside(_tensor, _cutoff \\ 0.0) do
     raise "vector_heaviside/2 not implemented"
   end
 

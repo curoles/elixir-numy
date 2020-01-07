@@ -135,7 +135,7 @@ defmodule Numy.Vector do
     @doc "f(x) = 1/(1 + e⁻ˣ)"
     def apply_sigmoid(v) when is_map(v) do
       sigmoid = fn x -> (1.0/(1.0 + :math.exp(-x))) end
-      res = Enum.map(v.ata, fn x -> sigmoid.(x) end)
+      res = Enum.map(v.data, fn x -> sigmoid.(x) end)
       %{v | data: res}
     end
 
