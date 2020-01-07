@@ -1,6 +1,6 @@
 # Releases
 
-## 0.1.2 (01/xx/20) basic vector operations
+## 0.1.2 (01/06/20) basic vector operations
 
 - vector ops protocol `Numy.Vc`
 - protocol `Numy.Vcm` for ops that mutate vector state
