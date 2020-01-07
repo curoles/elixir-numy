@@ -62,9 +62,9 @@ defmodule Numy.Float do
     https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/)
   by Bruce Dawson.
   """
-  @spec close?(number, number, float, pos_integer) :: boolean
-  def close?(a, b, epsilon \\ 1.0e-9, max_ulps \\ 1)
-  def close?(a, b, epsilon, max_ulps)
+  @spec equal?(number, number, float, pos_integer) :: boolean
+  def equal?(a, b, epsilon \\ 1.0e-9, max_ulps \\ 4)
+  def equal?(a, b, epsilon, max_ulps)
   when is_number(a) and is_number(b) and is_integer(max_ulps) do
 
     a = :erlang.float a
@@ -82,10 +82,10 @@ defmodule Numy.Float do
     end
   end
 
-  def close?(al, bl, epsilon, max_ulps)
+  def equal?(al, bl, epsilon, max_ulps)
   when is_list(al) and is_list(bl) and is_integer(max_ulps) do
     Enum.zip(List.flatten(al), List.flatten(bl))
-    |> Enum.all?(fn {a,b} -> close?(a,b,epsilon,max_ulps) end)
+    |> Enum.all?(fn {a,b} -> equal?(a,b,epsilon,max_ulps) end)
   end
 
   def make_list_randoms(size, list \\ [])
