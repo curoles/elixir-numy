@@ -111,4 +111,10 @@ defprotocol Numy.Vcm do
   def sub!(v1, v2)
   def mul!(v1, v2)
   def div!(v1, v2)
+
+  @doc "Multiply each element by a constant, aᵢ ← aᵢ×scale_factor"
+  def scale!(v, factor)
+  @doc "Add a constant to each element, aᵢ ← aᵢ + offset"
+  def offset!(v, off)
+
 end

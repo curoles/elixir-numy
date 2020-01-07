@@ -15,4 +15,6 @@ ERL_NIF_TERM numy_vector_add        (ErlNifEnv* env, int argc, const ERL_NIF_TER
 ERL_NIF_TERM numy_vector_sub        (ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM numy_vector_mul        (ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM numy_vector_div        (ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
+ERL_NIF_TERM numy_vector_scale      (ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
+ERL_NIF_TERM numy_vector_offset     (ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM numy_vector_dot_product(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);

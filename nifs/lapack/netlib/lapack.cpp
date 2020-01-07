@@ -367,8 +367,9 @@ static ErlNifFunc nif_funcs[] = {
     {          "vector_div",   2,         numy_vector_div,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_dot",   2, numy_vector_dot_product,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {           "vector_at",   2,          numy_vector_at,   0},
-    {        "vector_equal",   2,       numy_vector_equal,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
-
+    {        "vector_equal",   2,       numy_vector_equal,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {        "vector_scale",   2,       numy_vector_scale,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {       "vector_offset",   2,      numy_vector_offset,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.

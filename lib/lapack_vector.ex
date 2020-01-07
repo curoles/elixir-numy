@@ -112,13 +112,11 @@ defmodule Numy.Lapack.Vector do
     end
 
     def scale(v, factor) when is_map(v) and is_number(factor) do
-      res = Enum.map(v.data, fn x -> x * factor end)
-      %Numy.Vector{nelm: v.nelm, data: res}
+      Numy.Vcm.scale!(LVec.new(v), factor)
     end
 
     def offset(v, off) when is_map(v) and is_number(off) do
-      res = Enum.map(v.data, fn x -> x + off end)
-      %Numy.Vector{nelm: v.nelm, data: res}
+      Numy.Vcm.offset!(LVec.new(v), off)
     end
 
     def dot(v1, v2) when is_map(v1) and is_map(v2) do
@@ -203,6 +201,24 @@ defmodule Numy.Lapack.Vector do
       try do
         Numy.Lapack.vector_div(v1.lapack.nif_resource, v2.lapack.nif_resource)
         v1
+      rescue
+        _ -> :error
+      end
+    end
+
+    def scale!(v, factor) when is_map(v) and is_number(factor) do
+      try do
+        Numy.Lapack.vector_scale(v.lapack.nif_resource, factor)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def offset!(v, factor) when is_map(v) and is_number(factor) do
+      try do
+        Numy.Lapack.vector_offset(v.lapack.nif_resource, factor)
+        v
       rescue
         _ -> :error
       end

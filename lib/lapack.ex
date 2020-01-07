@@ -220,6 +220,14 @@ defmodule Numy.Lapack do
     raise "vector_equal/2 not implemented"
   end
 
+  def vector_scale(_tensor_a, _factor) do
+    raise "vector_scale/2 not implemented"
+  end
+
+  def vector_offset(_tensor_a, _factor) do
+    raise "vector_offset/2 not implemented"
+  end
+
   @doc "Deep copy of all elements regardless of shape and data type."
   def data_copy_all(_tensor_a, _tensor_b) do
     raise "data_copy_all/2 not implemented"

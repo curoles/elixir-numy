@@ -121,6 +121,30 @@ bool two_vectors_argv(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[],
     return true;
 }
 
+static inline
+bool vector_fnum_argv(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[],
+    numy::Tensor*& tensor, double& param)
+{
+    if (argc != 2) {
+        return false;
+    }
+
+    tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return false;
+    }
+
+    if (!enif_get_double(env, argv[1], &param)) {
+        int64_t i = 0; if (!enif_get_int64(env, argv[1], &i)) {
+            return false;
+        }
+        param = i;
+    }
+
+    return true;
+}
+
 ERL_NIF_TERM numy_vector_dot_product(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     numy::Tensor* tensor1 {nullptr};
@@ -216,4 +240,42 @@ ERL_NIF_TERM numy_vector_equal(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
     bool equal = vectors_equal(tensor1->dbl_data(), tensor2->dbl_data(), length);
 
     return numy::tnsr::getBoolAtom(env, equal);
+}
+
+ERL_NIF_TERM numy_vector_scale(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    numy::Tensor* tensor {nullptr};
+    double factor {1.0};
+
+    if (!vector_fnum_argv(env, argc, argv, tensor, factor)) {
+        return enif_make_badarg(env);
+    }
+
+    double* data = tensor->dbl_data();
+
+    #pragma GCC ivdep
+    for (unsigned i = 0; i < tensor->nrElements; ++i) {
+        data[i] *= factor;
+    }
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_offset(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    numy::Tensor* tensor {nullptr};
+    double off {1.0};
+
+    if (!vector_fnum_argv(env, argc, argv, tensor, off)) {
+        return enif_make_badarg(env);
+    }
+
+    double* data = tensor->dbl_data();
+
+    #pragma GCC ivdep
+    for (unsigned i = 0; i < tensor->nrElements; ++i) {
+        data[i] += off;
+    }
+
+    return numy::tnsr::getOkAtom(env);
 }

@@ -39,6 +39,8 @@ defmodule NumyTest do
     Vcm.add!(lv2,lv)
     Vcm.sub!(lv2,lv)
     assert Vc.equal?(lv, lv2)
+    assert Numy.Float.equal?(Vc.scale(v, 3.71) |> Vc.data, Vc.scale(lv, 3.71) |> Vc.data())
+    assert Numy.Float.equal?(Vc.offset(v, 3.71) |> Vc.data, Vc.offset(lv, 3.71) |> Vc.data())
   end
 
   test "lapack LLS QR" do
