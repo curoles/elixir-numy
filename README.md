@@ -8,6 +8,7 @@ https://github.com/curoles/elixir-numy/actions)
 https://github.com/curoles/elixir-numy/blob/master/LICENSE)
 
 **Numy** is LAPACK based scientific computing library.
+Online API documentation is [here](https://hexdocs.pm/numy/readme.html).
 
 ## Table of contents
 
@@ -15,9 +16,8 @@ https://github.com/curoles/elixir-numy/blob/master/LICENSE)
 - [Comparison](#comparison)
 - [Installation](#installation)
 - [Mutable internal state](#mutable-internal-state)
-- [Linear Algebra with LAPACK](#linear-algebra-with-lapack)
-  * [BLAS](#blas)
-  * [LAPACK](#lapack)
+- [Vector operations](#vector-operations)
+
 
 ## Example
 
@@ -97,7 +97,47 @@ iex(5)> Numy.Vc.data(v)
 [2.0, 4.0, 6.0]
 ```
 
-## Linear Algebra BLAS
+## Vector operations
+
+| Function          |`Vc`|`Vcm`| Description                                            |
+| :------------------ |:-:|:-:| :----------------------------------------------------- |
+| `new(nelm)`         |   |   | Create new vector of size nelm                         |
+| `new(list)`         |   |   | Create new vector from Elixir list                     |
+| `new(v)`            |   |   | Create new vector as copy of another vector            |
+| `assign_zeros(v)`   | x |   | Assign 0.0 to all elements                             |
+| `assign_ones(v)`    | x |   | Assign 1.0 to all elements                             |
+| `assign_random(v)`  | x |   | Assign random values to the elements                   |
+| `empty?(v)`         | x |   | Return true if vector is empty                         |
+| `data(v)`           | x |   | Get data as a list                                     |
+| `at(v,index)`       | x |   | Get value of N-th element                              |
+| `equal?(v1,v2)`     | x |   | Compare 2 vectors                                      |
+| `add(v1,v2)`        | x |   | Add 2 vectors, cᵢ ← aᵢ + bᵢ                            |
+| `add!(v1,v2)`       |   | x | aᵢ ← aᵢ + bᵢ                                           |
+| `sub(v1,v2)`        | x |   | Subtract one vector from other, cᵢ ← aᵢ - bᵢ           |
+| `sub!(v1,v2)`       |   | x | aᵢ ← aᵢ - bᵢ                                           |
+| `mul(v1,v2)`        | x |   | Multiply 2 vectors, cᵢ ← aᵢ×bᵢ                         |
+| `mul!(v1,v2)`       |   | x | aᵢ ← aᵢ×bᵢ                                             |
+| `div(v1,v2)`        | x |   | Divide 2 vectors, cᵢ ← aᵢ÷bᵢ                           |
+| `div!(v1,v2)`       |   | x | aᵢ ← aᵢ÷bᵢ                                             |
+| `scale(v,factor)`   | x |   | Multiply each element by a constant, aᵢ ← aᵢ×scale_factor |
+| `scale!(v,factor)`  |   | x | aᵢ ← aᵢ×scale_factor                                   |
+| `offset(v,off)`     | x |   | Add a constant to each element, aᵢ ← aᵢ + offset       |
+| `offset!(c,off)`    |   | x | aᵢ ← aᵢ + offset                                       |
+| `dot(v1,v2)`        | x |   | Dot product of 2 vectors, ∑aᵢ×bᵢ                       |
+| `sum(v)`            | x |   | Sum of all elements, ∑aᵢ                               |
+| `average(v)`        | x |   | Average (∑aᵢ)/length                                   |
+| `max(v)`            | x |   | Get max value                                          |
+| `min(v)`            | x |   | Get min value                                          |
+| `max_index(v)`      | x |   | Get index of max value                                 |
+| `min_index(v)`      | x |   | Get index of min value                                 |
+| `apply_heaviside(v)`| x |   | Step function, aᵢ ← 0 if aᵢ < 0 else 1                 |
+| `apply_heaviside!(v)`|  | x | |
+| `apply_sigmoid(v)`  | x |   | f(x) = 1/(1 + e⁻ˣ)                                     |
+| `apply_sigmoid!(v)` |   | x | |
+
+
+
+<!--## Linear Algebra BLAS
 
 See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145.html).
 
@@ -118,4 +158,4 @@ See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145
 | ------------------------------: | -------------------------: |-------------------------------------|
 |                       solve_lls |               lapack_dgels | Linear Least Squares by QR/LR       |
 | | | |
-
+-->
