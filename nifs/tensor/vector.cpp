@@ -8,6 +8,7 @@
 #include "vector.hpp"
 
 #include <algorithm>
+#include <functional>
 #include <cmath>
 
 #include <erl_nif.h>
@@ -458,6 +459,25 @@ ERL_NIF_TERM numy_vector_sigmoid(ErlNifEnv* env, int argc, const ERL_NIF_TERM ar
     for (unsigned i = 0; i < tensor->nrElements; ++i) {
         x[i] = 1.0 / (1.0 + exp(-x[i]));
     }
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_sort(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    double* x = tensor->dbl_data();
+
+    std::sort(x, &x[tensor->nrElements], std::less<double>());
 
     return numy::tnsr::getOkAtom(env);
 }

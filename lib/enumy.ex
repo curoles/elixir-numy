@@ -92,4 +92,12 @@ defmodule Numy.Enumy do
   def mean(enumerable) do
     Enum.sum(enumerable) / Enum.count(enumerable)
   end
+
+  @doc "Sort elements with Quicksort"
+  def sort([]), do: []
+  def sort([pivot | tail]) do
+    {left, right} = Enum.split_with(tail, fn(x) -> x < pivot end)
+    sort(left) ++ [pivot] ++ sort(right)
+  end
+
 end

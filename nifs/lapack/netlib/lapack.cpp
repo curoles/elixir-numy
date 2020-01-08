@@ -378,6 +378,7 @@ static ErlNifFunc nif_funcs[] = {
     {    "vector_min_index",   1,   numy_vector_min_index,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {    "vector_heaviside",   2,   numy_vector_heaviside,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {      "vector_sigmoid",   1,     numy_vector_sigmoid,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {         "vector_sort",   1,        numy_vector_sort,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.

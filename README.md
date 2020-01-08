@@ -21,7 +21,8 @@ Online API documentation is [here](https://hexdocs.pm/numy/readme.html).
 
 ## Example
 
-See this example in LAPACK [reference documentation](http://www.netlib.org/lapack/explore-html/d8/dd5/example___d_g_e_l_s__rowmajor_8c_source.html).
+See this example in LAPACK [reference documentation](
+http://www.netlib.org/lapack/explore-html/d8/dd5/example___d_g_e_l_s__rowmajor_8c_source.html).
 
 ```elixir
 iex(1)> a = Numy.Lapack.new_tensor([3,5])
@@ -131,10 +132,11 @@ iex(5)> Numy.Vc.data(v)
 | `max_index(v)`      | x |   | Get index of max value                                 |
 | `min_index(v)`      | x |   | Get index of min value                                 |
 | `apply_heaviside(v)`| x |   | Step function, aᵢ ← 0 if aᵢ < 0 else 1                 |
-| `apply_heaviside!(v)`|  | x | |
+| `apply_heaviside!(v)`|  | x |                                                        |
 | `apply_sigmoid(v)`  | x |   | f(x) = 1/(1 + e⁻ˣ)                                     |
-| `apply_sigmoid!(v)` |   | x | |
-
+| `apply_sigmoid!(v)` |   | x |                                                        |
+| `sort(v)`           | x |   | Sort elements of array                                 |
+| `sort!(v)`          |   | x | Sort elements of array in-place                        |
 
 
 <!--## Linear Algebra BLAS

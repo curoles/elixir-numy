@@ -27,5 +27,6 @@ DECL_NIF(numy_vector_max_index)
 DECL_NIF(numy_vector_min_index)
 DECL_NIF(numy_vector_heaviside)
 DECL_NIF(numy_vector_sigmoid)
+DECL_NIF(numy_vector_sort)
 
 #undef DECL_NIF

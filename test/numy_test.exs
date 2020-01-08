@@ -60,6 +60,15 @@ defmodule NumyTest do
     assert F.equal?(Vc.apply_sigmoid(v) |> Vc.data, Vc.apply_sigmoid(lv) |> Vc.data())
   end
 
+  test "vector sort" do
+    alias Numy.Vc, as: Vc
+    alias Numy.Float, as: F
+    l = Numy.Float.make_list_randoms(10)
+    v = Numy.Vector.new(l)
+    lv = Numy.Lapack.Vector.new(l)
+    assert F.equal?(Vc.sort(v) |> Vc.data, Vc.sort(lv) |> Vc.data)
+  end
+
   test "lapack LLS QR" do
     a = Numy.Lapack.new_tensor([3,5])
     Numy.Lapack.assign(a, [1,1,1,2,3,4,3,5,2,4,2,5,5,4,3])

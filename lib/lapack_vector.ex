@@ -166,6 +166,10 @@ defmodule Numy.Lapack.Vector do
       Numy.Vcm.apply_sigmoid!(LVec.new(v))
     end
 
+    def sort(v) when is_map(v) do
+      Numy.Vcm.sort!(LVec.new(v))
+    end
+
   end # defimpl Numy.Vc
 
 
@@ -237,6 +241,15 @@ defmodule Numy.Lapack.Vector do
     def apply_sigmoid!(v) when is_map(v) do
       try do
         Numy.Lapack.vector_sigmoid(v.lapack.nif_resource)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def sort!(v) when is_map(v) do
+      try do
+        Numy.Lapack.vector_sort(v.lapack.nif_resource)
         v
       rescue
         _ -> :error

@@ -91,6 +91,9 @@ defprotocol Numy.Vc do
   def apply_heaviside(v, cutoff \\ 0.0)
   @doc "f(x) = 1/(1 + e⁻ˣ)"
   def apply_sigmoid(v)
+
+  @doc "Sort elements"
+  def sort(v)
 end
 
 defprotocol Numy.Vcm do
@@ -122,4 +125,6 @@ defprotocol Numy.Vcm do
   @doc "f(x) = 1/(1 + e⁻ˣ)"
   def apply_sigmoid!(v)
 
+  @doc "Sort elements of vector in-place"
+  def sort!(v)
 end

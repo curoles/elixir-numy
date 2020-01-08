@@ -139,6 +139,10 @@ defmodule Numy.Vector do
       %{v | data: res}
     end
 
+    def sort(v) when is_map(v) do
+      Numy.Vector.new(Numy.Enumy.sort(v.data))
+    end
+
   end # defimpl Numy.Vc do
 
   def mean_sq_err(v1, v2) do
