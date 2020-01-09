@@ -1,5 +1,12 @@
 # Releases
 
+## 0.1.3 (01/08/20) add vector operations
+
+- set_at
+- assign_all
+- reverse
+- axpby
+
 ## 0.1.2 (01/06/20) basic vector operations
 
 - vector ops protocol `Numy.Vc`

@@ -343,7 +343,7 @@ ERL_NIF_TERM numy_vector_assign_all(ErlNifEnv* env, int argc, const ERL_NIF_TERM
 
     double val {0.0};
     if (!enif_get_double(env, argv[1], &val)) {
-        int64_t intVal {0}; if (!enif_get_int64(env, argv[2], &intVal)) {
+        int64_t intVal {0}; if (!enif_get_int64(env, argv[1], &intVal)) {
             return enif_make_badarg(env);
         }
         val = intVal;
