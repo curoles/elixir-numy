@@ -43,6 +43,8 @@ defprotocol Numy.Vc do
   def assign_ones(v)
   @doc "Assign random values to the elements."
   def assign_random(v)
+  @doc "Assign some value to all elements."
+  def assign_all(v, val)
 
   @doc "Return true if vector is empty."
   def empty?(v)
@@ -94,6 +96,9 @@ defprotocol Numy.Vc do
 
   @doc "Sort elements"
   def sort(v)
+  @doc "Reverse"
+  def reverse(v)
+
 end
 
 defprotocol Numy.Vcm do
@@ -127,4 +132,12 @@ defprotocol Numy.Vcm do
 
   @doc "Sort elements of vector in-place"
   def sort!(v)
+  @doc "Reverse elements of vector in-place"
+  def reverse!(v)
+
+  @doc "Set N-th element to a new value"
+  def set_at!(v, index, val)
+
+  @doc "aᵢ ← aᵢ×factor_a + bᵢ×factor_b"
+  def axpby!(v1, v2, f1, f2)
 end

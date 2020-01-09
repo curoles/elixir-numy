@@ -59,7 +59,7 @@ already allocated memory to store the result inside the context of NIF module.
 
 ## Installation
 
-Ubuntu 18.04, `sudo apt install liblapacke-dev gfortran`.
+Ubuntu 18.04, `sudo apt install build-essential liblapacke-dev gfortran`.
 
 The package can be installed
 by adding `numy` to your list of dependencies in `mix.exs`:
@@ -67,7 +67,7 @@ by adding `numy` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:numy, "~> 0.1.2"}
+    {:numy, "~> 0.1.3"}
   ]
 end
 ```
@@ -77,8 +77,8 @@ end
 For performance reasons, Numy NIF objects are mutable. That is, some API functions
 change internal state of an object. Two sets of APIs are provided, one has functions
 that change object's internal state and other that does not change it.
-In order to maintain that immutability, input/output object is copied and
-its copy is mutated.
+In order to maintain that immutability, original input/output object is copied and
+it is its copy that gets mutated.
 
 ### Example of immutable addition of two vectors
 
@@ -100,6 +100,12 @@ iex(5)> Numy.Vc.data(v)
 
 ## Vector operations
 
+Vector [Jupyter tutorials](
+https://github.com/curoles/numy-tutorials/blob/master/README.md):
+
+- [Vector creation and initialization.](
+  https://github.com/curoles/numy-tutorials/blob/master/vector/VectorCreate.ipynb)
+
 | Function          |`Vc`|`Vcm`| Description                                            |
 | :------------------ |:-:|:-:| :----------------------------------------------------- |
 | `new(nelm)`         |   |   | Create new vector of size nelm                         |
@@ -108,9 +114,11 @@ iex(5)> Numy.Vc.data(v)
 | `assign_zeros(v)`   | x |   | Assign 0.0 to all elements                             |
 | `assign_ones(v)`    | x |   | Assign 1.0 to all elements                             |
 | `assign_random(v)`  | x |   | Assign random values to the elements                   |
+| `assign_all(v,val)` | x |   | Assign certain values to all elements                  |
 | `empty?(v)`         | x |   | Return true if vector is empty                         |
 | `data(v)`           | x |   | Get data as a list                                     |
-| `at(v,index)`       | x |   | Get value of N-th element                              |
+| `at(v,pos)`         | x |   | Get value of N-th element                              |
+| `set_at!(v,pos,val)`|   | x | Set value of N-th element                              |
 | `equal?(v1,v2)`     | x |   | Compare 2 vectors                                      |
 | `add(v1,v2)`        | x |   | Add 2 vectors, cᵢ ← aᵢ + bᵢ                            |
 | `add!(v1,v2)`       |   | x | aᵢ ← aᵢ + bᵢ                                           |
@@ -137,7 +145,10 @@ iex(5)> Numy.Vc.data(v)
 | `apply_sigmoid!(v)` |   | x |                                                        |
 | `sort(v)`           | x |   | Sort elements of array                                 |
 | `sort!(v)`          |   | x | Sort elements of array in-place                        |
-
+| `reverse(v)`        | x |   | Reverse order of elements                              |
+| `reverse!(v)`       |   | x | Reverse in-place                                       |
+| `axpby(v)`          | x |   | cᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
+| `axpby!(v)`         |   | x | aᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
 
 <!--## Linear Algebra BLAS
 

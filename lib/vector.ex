@@ -38,6 +38,10 @@ defmodule Numy.Vector do
       %{v | data: Numy.Float.make_list_randoms(v.nelm)}
     end
 
+    def assign_all(v, val) when is_map(v) and is_number(val) do
+      %{v | data: List.duplicate(val, v.nelm)}
+    end
+
     def data(v) when is_map(v) do
       v.data
     end
@@ -140,7 +144,11 @@ defmodule Numy.Vector do
     end
 
     def sort(v) when is_map(v) do
-      Numy.Vector.new(Numy.Enumy.sort(v.data))
+      Numy.Vector.new(Enum.sort(v.data))
+    end
+
+    def reverse(v) when is_map(v) do
+      Numy.Vector.new(Enum.reverse(v.data))
     end
 
   end # defimpl Numy.Vc do

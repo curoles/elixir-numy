@@ -121,6 +121,16 @@ unsigned int vector_min(double a[], unsigned length)
     return pos;
 }
 
+static inline
+void axpby_vectors(double a[], const double b[], unsigned length,
+    double factor_a, double factor_b)
+{
+    #pragma GCC ivdep
+    for (unsigned int i = 0; i < length; ++i) {
+        a[i] = factor_b * b[i] + factor_a * a[i];
+    }
+}
+
 /**
  * Copy Erlang list to C array. 
  * 
@@ -247,7 +257,7 @@ ERL_NIF_TERM numy_vector_div(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]
     return numy_vector__op2(env, argc, argv, div_vectors);
 }
 
-ERL_NIF_TERM numy_vector_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+ERL_NIF_TERM numy_vector_get_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     if (argc != 2) {
         return enif_make_badarg(env);
@@ -264,6 +274,10 @@ ERL_NIF_TERM numy_vector_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
+    if (index < 0) {
+        index = tensor->nrElements + index;
+    }
+
     if (index < 0 or index >= (int)tensor->nrElements) {
         return enif_make_badarg(env);
     }
@@ -273,6 +287,76 @@ ERL_NIF_TERM numy_vector_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     double val = data[index];
 
     return enif_make_double(env, val);
+}
+
+ERL_NIF_TERM numy_vector_set_at(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 3) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    int index{0};
+    if (!enif_get_int(env, argv[1], &index)) {
+        return enif_make_badarg(env);
+    }
+
+    if (index < 0) {
+        index = tensor->nrElements + index;
+    }
+
+    if (index < 0 or index >= (int)tensor->nrElements) {
+        return enif_make_badarg(env);
+    }
+
+    double val {0.0};
+    if (!enif_get_double(env, argv[2], &val)) {
+        int64_t intVal {0}; if (!enif_get_int64(env, argv[2], &intVal)) {
+            return enif_make_badarg(env);
+        }
+        val = intVal;
+    }
+
+    double* data = (double*) tensor->data;
+
+    data[index] = val;
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_assign_all(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    double val {0.0};
+    if (!enif_get_double(env, argv[1], &val)) {
+        int64_t intVal {0}; if (!enif_get_int64(env, argv[2], &intVal)) {
+            return enif_make_badarg(env);
+        }
+        val = intVal;
+    }
+
+    double* data = (double*) tensor->data;
+
+    #pragma GCC ivdep
+    for (unsigned i = 0; i < tensor->nrElements; ++i) {
+        data[i] = val;
+    }
+
+    return numy::tnsr::getOkAtom(env);
 }
 
 ERL_NIF_TERM numy_vector_equal(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -478,6 +562,67 @@ ERL_NIF_TERM numy_vector_sort(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
     double* x = tensor->dbl_data();
 
     std::sort(x, &x[tensor->nrElements], std::less<double>());
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_reverse(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    double* x = tensor->dbl_data();
+
+    std::reverse(x, &x[tensor->nrElements]);
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_axpby(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 4) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensor1 = numy::tnsr::getTensor(env, argv[0]);
+    const numy::Tensor* tensor2 = numy::tnsr::getTensor(env, argv[1]);
+
+    if (tensor1 == nullptr or !tensor1->isValid() or tensor2 == nullptr or !tensor2->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    double factor_a {0.0};
+    if (!enif_get_double(env, argv[2], &factor_a)) {
+        int64_t intVal {0}; if (!enif_get_int64(env, argv[2], &intVal)) {
+            return enif_make_badarg(env);
+        }
+        factor_a = intVal;
+    }
+
+    double factor_b {0.0};
+    if (!enif_get_double(env, argv[3], &factor_a)) {
+        int64_t intVal {0}; if (!enif_get_int64(env, argv[3], &intVal)) {
+            return enif_make_badarg(env);
+        }
+        factor_b = intVal;
+    }
+
+    double* a = (double*) tensor1->data;
+    double* b = (double*) tensor2->data;
+
+    unsigned length = std::min(tensor1->nrElements, tensor2->nrElements);
+
+    #pragma GCC ivdep
+    for (unsigned i = 0; i < length; ++i) {
+        a[i] = factor_a * a[i] + factor_b * b[i];
+    }
 
     return numy::tnsr::getOkAtom(env);
 }

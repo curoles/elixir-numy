@@ -366,7 +366,9 @@ static ErlNifFunc nif_funcs[] = {
     {          "vector_mul",   2,         numy_vector_mul,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_div",   2,         numy_vector_div,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_dot",   2,         numy_vector_dot,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {           "vector_at",   2,          numy_vector_at,   0},
+    {       "vector_get_at",   2,      numy_vector_get_at,   0},
+    {       "vector_set_at",   3,      numy_vector_set_at,   0},
+    {   "vector_assign_all",   2,  numy_vector_assign_all,   0},
     {        "vector_equal",   2,       numy_vector_equal,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "vector_scale",   2,       numy_vector_scale,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {       "vector_offset",   2,      numy_vector_offset,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
@@ -378,7 +380,9 @@ static ErlNifFunc nif_funcs[] = {
     {    "vector_min_index",   1,   numy_vector_min_index,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {    "vector_heaviside",   2,   numy_vector_heaviside,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {      "vector_sigmoid",   1,     numy_vector_sigmoid,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {         "vector_sort",   1,        numy_vector_sort,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {         "vector_sort",   1,        numy_vector_sort,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {      "vector_reverse",   1,     numy_vector_reverse,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {        "vector_axpby",   4,       numy_vector_axpby,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.

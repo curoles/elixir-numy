@@ -42,8 +42,8 @@ defmodule Numy.Lapack do
 
   defp check_nif_version() do
     try do
-      if "#{nif_numy_version()}" != "0.1.2" do
-        raise "NIF Numy version is #{nif_numy_version()}, expected 0.1.2"
+      if "#{nif_numy_version()}" != "0.1.3" do
+        raise "NIF Numy version is #{nif_numy_version()}, expected 0.1.3"
       end
       :ok
     rescue
@@ -211,8 +211,16 @@ defmodule Numy.Lapack do
   end
 
   @doc "If all data is viewed as a vector, get element in certain position."
-  def vector_at(_tensor, _index) do
-    raise "vector_at/2 not implemented"
+  def vector_get_at(_tensor, _index) do
+    raise "vector_get_at/2 not implemented"
+  end
+
+  def vector_set_at(_tensor, _index, _val) do
+    raise "vector_set_at/3 not implemented"
+  end
+
+  def vector_assign_all(_tensor, _val) do
+    raise "vector_assign_all/ not implemented"
   end
 
   @doc "Compare elements of 2 vectors for equality"
@@ -263,6 +271,14 @@ defmodule Numy.Lapack do
 
   def vector_sort(_tensor) do
     raise "vector_sort/1 not implemented"
+  end
+
+  def vector_reverse(_tensor) do
+    raise "vector_reverse/1 not implemented"
+  end
+
+  def vector_axpby(_tensor_a, _tensor_b, _factor_a, _factor_b) do
+    raise "vector_axpby/4 not implemented"
   end
 
   def copy(tensor_dst, tensor_src) when is_map(tensor_dst) and is_map(tensor_src) do

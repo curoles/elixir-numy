@@ -53,13 +53,18 @@ defmodule Numy.Lapack.Vector do
 
   defimpl Numy.Vc do
 
+    def assign_all(v, val) when is_map(v) and is_number(val) do
+      Numy.Lapack.vector_assign_all(v.lapack.nif_resource, val)
+      v
+    end
+
     def assign_zeros(v) when is_map(v) do
-      Numy.Lapack.assign(v.lapack, List.duplicate(0.0, v.nelm))
+      Numy.Lapack.vector_assign_all(v.lapack.nif_resource, 0.0)
       v
     end
 
     def assign_ones(v) when is_map(v) do
-      Numy.Lapack.assign(v.lapack, List.duplicate(1.0, v.nelm))
+      Numy.Lapack.vector_assign_all(v.lapack.nif_resource, 1.0)
       v
     end
 
@@ -74,7 +79,7 @@ defmodule Numy.Lapack.Vector do
 
     def at(%Numy.Lapack.Vector{nelm: nelm}, index, default) when index < 0 or index >= nelm, do: default
     def at(v, index, _default) when is_map(v) and is_integer(index) do
-      Numy.Lapack.vector_at(v.lapack.nif_resource, index)
+      Numy.Lapack.vector_get_at(v.lapack.nif_resource, index)
     end
 
     def empty?(v) when is_map(v) do
@@ -170,6 +175,10 @@ defmodule Numy.Lapack.Vector do
       Numy.Vcm.sort!(LVec.new(v))
     end
 
+    def reverse(v) when is_map(v) do
+      Numy.Vcm.reverse!(LVec.new(v))
+    end
+
   end # defimpl Numy.Vc
 
 
@@ -251,6 +260,34 @@ defmodule Numy.Lapack.Vector do
       try do
         Numy.Lapack.vector_sort(v.lapack.nif_resource)
         v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def reverse!(v) when is_map(v) do
+      try do
+        Numy.Lapack.vector_reverse(v.lapack.nif_resource)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def set_at!(v, pos, val) when is_map(v) and is_integer(pos) and is_number(val) do
+      try do
+        Numy.Lapack.vector_set_at(v.lapack.nif_resource, pos, val)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def axpby!(v1, v2, f1, f2) when is_map(v1) and is_map(v2) and
+    is_number(f1) and is_number(f2) do
+      try do
+        Numy.Lapack.vector_axpby(v1.lapack.nif_resource, v1.lapack.nif_resource, f1, f2)
+        v1
       rescue
         _ -> :error
       end

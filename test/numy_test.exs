@@ -61,12 +61,17 @@ defmodule NumyTest do
   end
 
   test "vector sort" do
-    alias Numy.Vc, as: Vc
+    alias Numy.Vc
+    alias Numy.Vcm
     alias Numy.Float, as: F
     l = Numy.Float.make_list_randoms(10)
     v = Numy.Vector.new(l)
     lv = Numy.Lapack.Vector.new(l)
     assert F.equal?(Vc.sort(v) |> Vc.data, Vc.sort(lv) |> Vc.data)
+    assert F.equal?(Vc.reverse(v) |> Vc.data, Vc.reverse(lv) |> Vc.data)
+    assert F.equal?(Vc.at(v,5), Vc.at(lv,5))
+    Vcm.set_at!(lv, 5, 7.123)
+    assert F.equal?(7.123, Vc.at(lv,5))
   end
 
   test "lapack LLS QR" do

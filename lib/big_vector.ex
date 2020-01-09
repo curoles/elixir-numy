@@ -38,6 +38,10 @@ defmodule Numy.BigVector do
       %{v | data: Numy.Float.make_list_randoms(v.nelm)}
     end
 
+    def assign_all(v, val) when is_map(v) and is_number(val) do
+      %{v | data: List.duplicate(val, v.nelm)}
+    end
+
     def data(v) when is_map(v) do
       v.data
     end
@@ -150,6 +154,14 @@ defmodule Numy.BigVector do
       sigmoid = fn x -> (1.0/(1.0 + :math.exp(-x))) end
       res = Enum.map(v.data, fn x -> sigmoid.(x) end)
       %{v | data: res}
+    end
+
+    def sort(v) when is_map(v) do
+      Numy.Vector.new(Enum.sort(v.data))
+    end
+
+    def reverse(v) when is_map(v) do
+      Numy.Vector.new(Enum.reverse(v.data))
     end
 
   end # defimpl Numy.Vc do
