@@ -9,6 +9,8 @@
 
 #include <erl_nif.h>
 
+#include "tensor/tensor.hpp"
+
 #define DECL_NIF(fun) ERL_NIF_TERM fun (ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
 
 DECL_NIF(numy_vector_get_at)
@@ -32,5 +34,8 @@ DECL_NIF(numy_vector_sigmoid)
 DECL_NIF(numy_vector_sort)
 DECL_NIF(numy_vector_reverse)
 DECL_NIF(numy_vector_axpby)
+DECL_NIF(numy_mapset_op)
 
 #undef DECL_NIF
+
+bool tensor_save_to_file(numy::Tensor& tensor, const char* filename);

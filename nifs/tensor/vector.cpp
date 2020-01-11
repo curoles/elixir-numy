@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <functional>
 #include <cmath>
+#include <cassert>
 
 #include <erl_nif.h>
 
@@ -129,6 +130,137 @@ void axpby_vectors(double a[], const double b[], unsigned length,
     for (unsigned int i = 0; i < length; ++i) {
         a[i] = factor_b * b[i] + factor_a * a[i];
     }
+}
+
+static
+unsigned vector_copy_range(
+    double a[], unsigned offset_a, unsigned stride_a, unsigned len_a,
+    const double b[], unsigned offset_b, unsigned stride_b, unsigned len_b,
+    unsigned count)
+{
+    assert(stride_a > 0 and stride_b > 0);
+    assert(offset_a < len_a and offset_b < len_b);
+
+    unsigned size_a = (len_a - offset_a) / stride_a;
+    unsigned size_b = (len_b - offset_b) / stride_b;
+
+    count = std::min(count, std::min(size_a, size_b));
+
+    for (unsigned pos_a = offset_a, pos_b = offset_b, i = 0; i < count;
+        ++i, pos_a += stride_a, pos_b += stride_b)
+    {
+        a[pos_a] = b[pos_b];
+    }
+
+    return count;
+}
+
+static inline
+void negate_vector(double a[], unsigned length)
+{
+    #pragma GCC ivdep
+    for (unsigned int i = 0; i < length; ++i) {
+        a[i] = -a[i];
+    }
+}
+
+static
+int find_in_vector(const double a[], unsigned length, double val)
+{
+    int pos {-1};
+
+    const double* end_a = a + length;
+
+    const double* p = std::find(a, end_a, val);
+    if (p != end_a) {
+        pos = (p - a) / sizeof(a[0]);
+    }
+
+    return pos;
+}
+
+static
+void vectors_swap_ranges(double a[], unsigned len_a, unsigned offset_a,
+                         double b[], unsigned len_b, unsigned offset_b)
+{
+    offset_a = std::min(len_a, offset_a);
+    offset_b = std::min(len_b, offset_b);
+
+    double* begin_a = a + offset_a;
+    double* begin_b = b + offset_b;
+
+    len_a -= offset_a;
+    len_b -= offset_b;
+
+    unsigned len = std::min(len_a, len_b);
+
+    std::swap_ranges(begin_a, begin_a + len, begin_b);
+}
+
+enum SETOP {SETOP_UNION, SETOP_INTERSECTION, SETOP_DIFF, SETOP_SYMM_DIFF};
+
+static
+void vector_setop(double a[], unsigned len_a,
+                  double b[], unsigned len_b,
+                  SETOP op, std::vector<double>& v)
+{
+    std::sort(a, a + len_a);
+    std::sort(b, b + len_b);
+
+    v.resize(len_a + len_b);
+    std::vector<double>::iterator it;
+
+    switch (op) {
+        case SETOP_UNION:
+            it = std::set_union(a, a+len_a, b, b+len_b, v.begin());
+            break;
+        case SETOP_INTERSECTION:
+            it = std::set_intersection(a, a+len_a, b, b+len_b, v.begin());
+            break;
+        case SETOP_DIFF:
+            it = std::set_difference(a, a+len_a, b, b+len_b, v.begin());
+            break;
+        case SETOP_SYMM_DIFF:
+            it = std::set_symmetric_difference(a, a+len_a, b, b+len_b, v.begin());
+            break;
+    }
+
+    v.resize(it - v.begin());
+}
+
+bool tensor_save_to_file(numy::Tensor& tensor, const char* filename)
+{
+    FILE* f = std::fopen(filename, "w");
+    if (f == nullptr) return false;
+
+    size_t hsz = std::fwrite(&tensor , sizeof(tensor), 1, f);
+    size_t dsz = std::fwrite(tensor.data, 1, tensor.dataSize, f);
+
+    std::fclose(f);
+
+    return hsz == 1 and dsz == tensor.dataSize;
+}
+
+bool tensor_load_from_file(numy::Tensor& tensor, const char* filename)
+{
+    FILE* f = std::fopen(filename, "r");
+    if (f == nullptr) return false;
+
+    size_t hsz = std::fread(&tensor , sizeof(tensor), 1, f);
+
+    bool header_ok = hsz == 1 and tensor.magic == tensor.MAGIC;
+
+    bool data_ok {false};
+
+    if (header_ok and tensor.nrElements > 0 and tensor.dataSize > 0) {
+        tensor.data = enif_alloc(tensor.dataSize);
+        size_t dsz = std::fread(tensor.data, 1, tensor.dataSize, f);
+        data_ok = (dsz == tensor.dataSize);
+    }
+
+    std::fclose(f);
+
+    return header_ok and data_ok;
 }
 
 /**
@@ -626,3 +758,86 @@ ERL_NIF_TERM numy_vector_axpby(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 
     return numy::tnsr::getOkAtom(env);
 }
+
+ERL_NIF_TERM numy_mapset_op(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 3) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor1 = numy::tnsr::getTensor(env, argv[0]);
+    numy::Tensor* tensor2 = numy::tnsr::getTensor(env, argv[1]);
+
+    if (tensor1 == nullptr or !tensor1->isValid() or
+        tensor2 == nullptr or !tensor2->isValid())
+    {
+	    return enif_make_badarg(env);
+    }
+
+    enum SETOP op {SETOP_UNION};
+    
+    //switch (atom){SETOP_UNION, SETOP_INTERSECTION, SETOP_DIFF, SETOP_SYMM_DIFF};
+
+    std::vector<double> resv;
+
+    vector_setop(tensor1->dbl_data(), tensor1->nrElements,
+                 tensor2->dbl_data(), tensor2->nrElements, op, resv);
+ 
+    //FIXME TODO XXXXXXXXXXXXXX from resv make List
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_swap_ranges(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 4) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor1 = numy::tnsr::getTensor(env, argv[0]);
+    numy::Tensor* tensor2 = numy::tnsr::getTensor(env, argv[1]);
+
+    if (tensor1 == nullptr or !tensor1->isValid() or
+        tensor2 == nullptr or !tensor2->isValid())
+    {
+	    return enif_make_badarg(env);
+    }
+
+    //read offsets XXXXXXXXXXXXXXXXXXXXX
+
+    vectors_swap_ranges(tensor1->dbl_data(), tensor1->nrElements, /*offset_a*/0,
+                        tensor2->dbl_data(), tensor2->nrElements, /*off_b*/0);
+
+    return numy::tnsr::getOkAtom(env);
+}
+
+ERL_NIF_TERM numy_vector_find(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    double val {0.0};
+    // get XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+    int pos = find_in_vector(tensor->dbl_data(), tensor->nrElements, val);
+
+    return enif_make_int(env, pos); // -1 if could not find
+}
+
+#if 0
+void negate_vector(double a[], unsigned length)
+
+unsigned vector_copy_range(
+    double a[], unsigned offset_a, unsigned stride_a, unsigned len_a,
+    const double b[], unsigned offset_b, unsigned stride_b, unsigned len_b,
+    unsigned count)
+
+
+#endif

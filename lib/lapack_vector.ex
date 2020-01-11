@@ -51,6 +51,20 @@ defmodule Numy.Lapack.Vector do
     new_vec
   end
 
+  @doc "Create new Vector from Elixir Range"
+  def new(%Range{} = range) do
+    new(Enum.to_list(range))
+  end
+
+  @doc "Create new Vector as a concatination of 2 other vectors"
+  def new(%Numy.Lapack.Vector{nelm: sz1, lapack: lpk1} = _v1,
+          %Numy.Lapack.Vector{nelm: sz2, lapack: _lpk2} = _v2) do
+    new_vec = Numy.Lapack.Vector.new(sz1 + sz2)
+    Numy.Lapack.copy(new_vec.lapack, lpk1)
+    # TODO XXXXXXXXXXXXXXX Numy.Lapack.copy(new_vec.lapack, lpk2, sz1)
+    new_vec
+  end
+
   defimpl Numy.Vc do
 
     def assign_all(v, val) when is_map(v) and is_number(val) do
