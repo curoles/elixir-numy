@@ -290,6 +290,10 @@ defmodule Numy.Lapack do
     raise "vector_copy_range/7 not implemented"
   end
 
+  def vector_find(_tensor, _val) do
+    raise "vector_find/2 not implemented"
+  end
+
   def copy(tensor_dst, tensor_src) when is_map(tensor_dst) and is_map(tensor_src) do
     try do
       data_copy_all(tensor_dst.nif_resource, tensor_src.nif_resource)

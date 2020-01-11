@@ -213,6 +213,14 @@ defmodule Numy.Lapack.Vector do
       Numy.Lapack.Vector.new(v1,v2)
     end
 
+    def find(v,val) when is_map(v) and is_number(val) do
+      Numy.Lapack.vector_find(v.lapack.nif_resource,val)
+    end
+
+    def contains?(v,val) when is_map(v) and is_number(val) do
+      Numy.Vc.find(v,val) != -1
+    end
+
   end # defimpl Numy.Vc
 
 

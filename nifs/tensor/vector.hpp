@@ -36,6 +36,7 @@ DECL_NIF(numy_vector_sort)
 DECL_NIF(numy_vector_reverse)
 DECL_NIF(numy_vector_axpby)
 DECL_NIF(numy_vector_copy_range)
+DECL_NIF(numy_vector_find)
 DECL_NIF(numy_mapset_op)
 
 #undef DECL_NIF

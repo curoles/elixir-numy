@@ -384,7 +384,8 @@ static ErlNifFunc nif_funcs[] = {
     {         "vector_sort",   1,        numy_vector_sort,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {      "vector_reverse",   1,     numy_vector_reverse,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "vector_axpby",   4,       numy_vector_axpby,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {   "vector_copy_range",   7,  numy_vector_copy_range,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {   "vector_copy_range",   7,  numy_vector_copy_range,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {         "vector_find",   2,        numy_vector_find,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.

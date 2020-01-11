@@ -127,6 +127,8 @@ https://github.com/curoles/numy-tutorials/blob/master/README.md):
 | `data(v)`           | x |   | Get data as a list                                     |
 | `at(v,pos)`         | x |   | Get value of N-th element                              |
 | `set_at!(v,pos,val)`|   | x | Set value of N-th element                              |
+| `contains?(v,val)`  | x |   | Check if value exists in the vector                    |
+| `find(v,val)`       | x |   | Find value in vector and return its position, -1 if can't find|
 | `equal?(v1,v2)`     | x |   | Compare 2 vectors                                      |
 | `add(v1,v2)`        | x |   | Add 2 vectors, cᵢ ← aᵢ + bᵢ                            |
 | `add!(v1,v2)`       |   | x | aᵢ ← aᵢ + bᵢ                                           |

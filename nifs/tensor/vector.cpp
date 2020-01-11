@@ -173,7 +173,7 @@ int find_in_vector(const double a[], unsigned length, double val)
 
     const double* p = std::find(a, end_a, val);
     if (p != end_a) {
-        pos = (p - a) / sizeof(a[0]);
+        pos = (p - a);
     }
 
     return pos;
@@ -824,7 +824,12 @@ ERL_NIF_TERM numy_vector_find(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
     }
 
     double val {0.0};
-    // get XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    if (!enif_get_double(env, argv[1], &val)) {
+        int64_t i; if (!enif_get_int64(env, argv[1], &i)) {
+            return enif_make_badarg(env);
+        }
+        val = i;
+    }
 
     int pos = find_in_vector(tensor->dbl_data(), tensor->nrElements, val);
 

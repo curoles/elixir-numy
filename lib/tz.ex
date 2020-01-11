@@ -103,6 +103,12 @@ defprotocol Numy.Vc do
 
   @doc "Concatenate 2 vectors"
   def concat(v1,v2)
+
+  @doc "Find value in vector, returns position, -1 if could not find"
+  def find(v,val)
+
+  @doc "Return true if vector contains the value"
+  def contains?(v,val)
 end
 
 defprotocol Numy.Vcm do
