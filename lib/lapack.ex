@@ -236,6 +236,10 @@ defmodule Numy.Lapack do
     raise "vector_offset/2 not implemented"
   end
 
+  def vector_negate(_tensor_a) do
+    raise "vector_negate/1 not implemented"
+  end
+
   @doc "Deep copy of all elements regardless of shape and data type."
   def data_copy_all(_tensor_a, _tensor_b) do
     raise "data_copy_all/2 not implemented"
@@ -279,6 +283,11 @@ defmodule Numy.Lapack do
 
   def vector_axpby(_tensor_a, _tensor_b, _factor_a, _factor_b) do
     raise "vector_axpby/4 not implemented"
+  end
+
+  def vector_copy_range(_tensor_a, _tensor_b, _count,
+     _offset_a \\ 0, _offset_b \\ 0, _stride_a \\ 1, _stride_b \\ 1) do
+    raise "vector_copy_range/7 not implemented"
   end
 
   def copy(tensor_dst, tensor_src) when is_map(tensor_dst) and is_map(tensor_src) do

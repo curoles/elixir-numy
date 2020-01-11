@@ -105,12 +105,20 @@ https://github.com/curoles/numy-tutorials/blob/master/README.md):
 
 - [Vector creation and initialization.](
   https://github.com/curoles/numy-tutorials/blob/master/vector/VectorCreate.ipynb)
+- [Vector access.](
+  https://github.com/curoles/numy-tutorials/blob/master/vector/VectorAccess.ipynb)
+- [Vector unary operations.](
+  https://github.com/curoles/numy-tutorials/blob/master/vector/VectorUnaryOp.ipynb)
+- [Vector binary operations.](
+  https://github.com/curoles/numy-tutorials/blob/master/vector/VectorBinaryOp.ipynb)
+
 
 | Function          |`Vc`|`Vcm`| Description                                            |
 | :------------------ |:-:|:-:| :----------------------------------------------------- |
 | `new(nelm)`         |   |   | Create new vector of size nelm                         |
 | `new(list)`         |   |   | Create new vector from Elixir list                     |
 | `new(v)`            |   |   | Create new vector as copy of another vector            |
+| `new(v1,v2)`        |   |   | Create new vector as concatenation of 2 other vectors  |
 | `assign_zeros(v)`   | x |   | Assign 0.0 to all elements                             |
 | `assign_ones(v)`    | x |   | Assign 1.0 to all elements                             |
 | `assign_random(v)`  | x |   | Assign random values to the elements                   |

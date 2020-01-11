@@ -372,6 +372,7 @@ static ErlNifFunc nif_funcs[] = {
     {        "vector_equal",   2,       numy_vector_equal,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "vector_scale",   2,       numy_vector_scale,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {       "vector_offset",   2,      numy_vector_offset,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {       "vector_negate",   1,      numy_vector_negate,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_dot",   2,         numy_vector_dot,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_sum",   1,         numy_vector_sum,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {          "vector_max",   1,         numy_vector_max,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
@@ -382,7 +383,8 @@ static ErlNifFunc nif_funcs[] = {
     {      "vector_sigmoid",   1,     numy_vector_sigmoid,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {         "vector_sort",   1,        numy_vector_sort,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {      "vector_reverse",   1,     numy_vector_reverse,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {        "vector_axpby",   4,       numy_vector_axpby,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {        "vector_axpby",   4,       numy_vector_axpby,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {   "vector_copy_range",   7,  numy_vector_copy_range,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.

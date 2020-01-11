@@ -70,6 +70,8 @@ defprotocol Numy.Vc do
   def scale(v, factor)
   @doc "Add a constant to each element, aᵢ ← aᵢ + offset"
   def offset(v, off)
+  @doc "Change sign of each element, aᵢ ← -aᵢ"
+  def negate(v)
 
   @doc "Dot product of 2 vectors, ∑aᵢ×bᵢ"
   def dot(v1, v2)
@@ -99,6 +101,8 @@ defprotocol Numy.Vc do
   @doc "Reverse"
   def reverse(v)
 
+  @doc "Concatenate 2 vectors"
+  def concat(v1,v2)
 end
 
 defprotocol Numy.Vcm do
@@ -124,6 +128,8 @@ defprotocol Numy.Vcm do
   def scale!(v, factor)
   @doc "Add a constant to each element, aᵢ ← aᵢ + offset"
   def offset!(v, off)
+  @doc "Change sign of each element, aᵢ ← -aᵢ"
+  def negate!(v)
 
   @doc "Step function, aᵢ ← 0 if aᵢ < 0 else 1"
   def apply_heaviside!(v, cutoff \\ 0.0)

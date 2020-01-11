@@ -56,12 +56,23 @@ defmodule Numy.Lapack.Vector do
     new(Enum.to_list(range))
   end
 
-  @doc "Create new Vector as a concatination of 2 other vectors"
+  @doc """
+  Create new Vector as a concatination of 2 other vectors
+
+  ## Examples
+
+      iex(1)> v1 = Numy.Lapack.Vector.new([1,2,3])
+      iex(2)> v2 = Numy.Lapack.Vector.new([4,5,6])
+      iex(3)> v3 = Numy.Lapack.Vector.new(v1,v2)
+      iex(4)> Numy.Vc.data(v3)
+      [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+  """
   def new(%Numy.Lapack.Vector{nelm: sz1, lapack: lpk1} = _v1,
-          %Numy.Lapack.Vector{nelm: sz2, lapack: _lpk2} = _v2) do
+          %Numy.Lapack.Vector{nelm: sz2, lapack: lpk2} = _v2) do
     new_vec = Numy.Lapack.Vector.new(sz1 + sz2)
     Numy.Lapack.copy(new_vec.lapack, lpk1)
-    # TODO XXXXXXXXXXXXXXX Numy.Lapack.copy(new_vec.lapack, lpk2, sz1)
+    Numy.Lapack.vector_copy_range(new_vec.lapack.nif_resource, lpk2.nif_resource,
+        sz2, sz1, 0, 1, 1)
     new_vec
   end
 
@@ -138,6 +149,10 @@ defmodule Numy.Lapack.Vector do
       Numy.Vcm.offset!(LVec.new(v), off)
     end
 
+    def negate(v) when is_map(v) do
+      Numy.Vcm.negate!(LVec.new(v))
+    end
+
     def dot(v1, v2) when is_map(v1) and is_map(v2) do
       Numy.Lapack.vector_dot(v1.lapack.nif_resource, v2.lapack.nif_resource)
     end
@@ -193,6 +208,11 @@ defmodule Numy.Lapack.Vector do
       Numy.Vcm.reverse!(LVec.new(v))
     end
 
+    @doc "Concatenate 2 vectors"
+    def concat(v1,v2) when is_map(v1) and is_map(v2) do
+      Numy.Lapack.Vector.new(v1,v2)
+    end
+
   end # defimpl Numy.Vc
 
 
@@ -246,6 +266,15 @@ defmodule Numy.Lapack.Vector do
     def offset!(v, factor) when is_map(v) and is_number(factor) do
       try do
         Numy.Lapack.vector_offset(v.lapack.nif_resource, factor)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def negate!(v) when is_map(v) do
+      try do
+        Numy.Lapack.vector_negate(v.lapack.nif_resource)
         v
       rescue
         _ -> :error

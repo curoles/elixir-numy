@@ -831,13 +831,66 @@ ERL_NIF_TERM numy_vector_find(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
     return enif_make_int(env, pos); // -1 if could not find
 }
 
-#if 0
-void negate_vector(double a[], unsigned length)
+ERL_NIF_TERM numy_vector_negate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
 
-unsigned vector_copy_range(
-    double a[], unsigned offset_a, unsigned stride_a, unsigned len_a,
-    const double b[], unsigned offset_b, unsigned stride_b, unsigned len_b,
-    unsigned count)
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    negate_vector(tensor->dbl_data(), tensor->nrElements);
+
+    return numy::tnsr::getOkAtom(env);
+}
 
 
-#endif
+ERL_NIF_TERM numy_vector_copy_range(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 7) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor1 = numy::tnsr::getTensor(env, argv[0]);
+    numy::Tensor* tensor2 = numy::tnsr::getTensor(env, argv[1]);
+
+    if (tensor1 == nullptr or !tensor1->isValid() or
+        tensor2 == nullptr or !tensor2->isValid())
+    {
+	    return enif_make_badarg(env);
+    }
+
+    unsigned count;
+    if (!enif_get_uint(env, argv[2], &count))
+        return enif_make_badarg(env);
+
+    unsigned offset_a;
+    if (!enif_get_uint(env, argv[3], &offset_a))
+        return enif_make_badarg(env);
+
+    unsigned offset_b;
+    if (!enif_get_uint(env, argv[4], &offset_b))
+        return enif_make_badarg(env);
+
+    unsigned stride_a;
+    if (!enif_get_uint(env, argv[5], &stride_a))
+        return enif_make_badarg(env);
+
+    unsigned stride_b;
+    if (!enif_get_uint(env, argv[6], &stride_b))
+        return enif_make_badarg(env);
+
+    if (stride_a == 0 or stride_b == 0)
+        return enif_make_badarg(env);
+
+    unsigned nrCopied = vector_copy_range(
+        tensor1->dbl_data(), offset_a, stride_a, tensor1->nrElements,
+        tensor2->dbl_data(), offset_b, stride_b, tensor2->nrElements,
+        count);
+
+    return enif_make_uint(env, nrCopied);
+}

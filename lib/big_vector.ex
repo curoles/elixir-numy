@@ -110,6 +110,11 @@ defmodule Numy.BigVector do
       %Numy.BigVector{nelm: v.nelm, data: res}
     end
 
+    def negate(v) when is_map(v) do
+      res = Enum.map(v.data, fn x -> -x end)
+      %Numy.BigVector{nelm: v.nelm, data: res}
+    end
+
     def dot(v1, v2) when is_map(v1) and is_map(v2) do
       Numy.Enumy.dot_product(v1.data, v2.data)
     end
@@ -162,6 +167,12 @@ defmodule Numy.BigVector do
 
     def reverse(v) when is_map(v) do
       Numy.Vector.new(Enum.reverse(v.data))
+    end
+
+    @doc "Create new Vector as a concatenation of 2"
+    def concat(%Numy.BigVector{nelm: sz1, data: d1} = _v1,
+               %Numy.BigVector{nelm: sz2, data: d2} = _v2) do
+      %Numy.BigVector{nelm: sz1+sz2, data: d1 ++ d2}
     end
 
   end # defimpl Numy.Vc do

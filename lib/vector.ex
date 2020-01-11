@@ -24,6 +24,12 @@ defmodule Numy.Vector do
     %Numy.Vector{nelm: sz, data: d}
   end
 
+  @doc "Create new Vector as a concatenation of 2"
+  def new(%Numy.Vector{nelm: sz1, data: d1} = _v1,
+          %Numy.Vector{nelm: sz2, data: d2} = _v2) do
+    %Numy.Vector{nelm: sz1+sz2, data: d1 ++ d2}
+  end
+
   defimpl Numy.Vc do
 
     def assign_zeros(v) when is_map(v) do
@@ -97,6 +103,10 @@ defmodule Numy.Vector do
       %Numy.Vector{nelm: nelm, data: Enum.map(data, fn x -> x + off end)}
     end
 
+    def negate(%Numy.Vector{nelm: nelm, data: data}) do
+      %Numy.Vector{nelm: nelm, data: Enum.map(data, fn x -> -x end)}
+    end
+
     def dot(v1, v2) when is_map(v1) and is_map(v2) do
       Numy.Enumy.dot_product(v1.data, v2.data)
     end
@@ -149,6 +159,12 @@ defmodule Numy.Vector do
 
     def reverse(v) when is_map(v) do
       Numy.Vector.new(Enum.reverse(v.data))
+    end
+
+    @doc "Create new Vector as a concatenation of 2"
+    def concat(%Numy.Vector{nelm: sz1, data: d1} = _v1,
+               %Numy.Vector{nelm: sz2, data: d2} = _v2) do
+      %Numy.Vector{nelm: sz1+sz2, data: d1 ++ d2}
     end
 
   end # defimpl Numy.Vc do
