@@ -140,6 +140,8 @@ https://github.com/curoles/numy-tutorials/blob/master/README.md):
 | `scale!(v,factor)`  |   | x | aᵢ ← aᵢ×scale_factor                                   |
 | `offset(v,off)`     | x |   | Add a constant to each element, aᵢ ← aᵢ + offset       |
 | `offset!(c,off)`    |   | x | aᵢ ← aᵢ + offset                                       |
+| `negate(v)`         | x |   | Change sign of each element, aᵢ ← -aᵢ                  |
+| `negate!(v)`        |   | x | aᵢ ← -aᵢ                                               |
 | `dot(v1,v2)`        | x |   | Dot product of 2 vectors, ∑aᵢ×bᵢ                       |
 | `sum(v)`            | x |   | Sum of all elements, ∑aᵢ                               |
 | `average(v)`        | x |   | Average (∑aᵢ)/length                                   |

@@ -833,7 +833,7 @@ ERL_NIF_TERM numy_vector_find(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
 
 ERL_NIF_TERM numy_vector_negate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    if (argc != 2) {
+    if (argc != 1) {
         return enif_make_badarg(env);
     }
 
