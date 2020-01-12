@@ -81,6 +81,27 @@ defmodule Numy.Lapack.Vector do
     %Numy.Lapack.Vector{nelm: nrelm, lapack: %Numy.Lapack{nif_resource: res, shape: [nrelm]}}
   end
 
+  def save_to_file(v, filename) when is_map(v) do
+    Numy.Lapack.tensor_save_to_file(v.lapack.nif_resource, filename)
+  end
+
+  @doc """
+
+  ## Examples
+
+      iex(4)> v = Numy.Lapack.Vector.new(1..100)
+      #Vector<size=100, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, ...]>
+      iex(5)> Numy.Lapack.Vector.save_to_file(v, 'vec.numy.bin')
+      :ok
+      iex(6)> Numy.Lapack.Vector.load_from_file('vec.numy.bin')
+      #Vector<size=100, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, ...]>
+  """
+  def load_from_file(filename) do
+    res = Numy.Lapack.tensor_load_from_file(filename)
+    make_from_nif_res(res)
+  end
+
+
   defimpl Numy.Vc do
 
     def assign_all(v, val) when is_map(v) and is_number(val) do

@@ -38,7 +38,7 @@ DECL_NIF(numy_vector_axpby)
 DECL_NIF(numy_vector_copy_range)
 DECL_NIF(numy_vector_find)
 DECL_NIF(numy_set_op)
+DECL_NIF(numy_tensor_save_to_file)
+DECL_NIF(numy_tensor_load_from_file)
 
 #undef DECL_NIF
-
-bool tensor_save_to_file(numy::Tensor& tensor, const char* filename);

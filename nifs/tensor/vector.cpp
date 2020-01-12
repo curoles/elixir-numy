@@ -932,3 +932,56 @@ ERL_NIF_TERM numy_vector_copy_range(ErlNifEnv* env, int argc, const ERL_NIF_TERM
 
     return enif_make_uint(env, nrCopied);
 }
+
+ERL_NIF_TERM numy_tensor_save_to_file(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 2) {
+        return enif_make_badarg(env);
+    }
+
+    numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    char filename[256];
+    if (!enif_get_string(env, argv[1], filename, sizeof(filename), ERL_NIF_LATIN1)) {
+        return enif_make_badarg(env);
+    }
+
+    bool ok = tensor_save_to_file(*tensor, filename);
+
+    return ok ? numy::tnsr::getOkAtom(env) : numy::tnsr::getErrAtom(env);
+}
+
+ERL_NIF_TERM numy_tensor_load_from_file(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    char filename[256];
+    if (!enif_get_string(env, argv[0], filename, sizeof(filename), ERL_NIF_LATIN1)) {
+        return enif_make_badarg(env);
+    }
+
+    using namespace numy::tnsr;
+    NIFResource* resourceMngr = (NIFResource*) enif_priv_data(env);
+
+    if (resourceMngr == nullptr)
+        return enif_make_badarg(env);
+
+    numy::Tensor* tensor = resourceMngr->allocate();
+
+    if (tensor == nullptr)
+        return enif_make_badarg(env);
+
+    ERL_NIF_TERM nifTensor = enif_make_resource(env, tensor);
+
+    enif_release_resource(tensor);
+
+    bool ok = tensor_load_from_file(*tensor, filename);
+
+    return ok ? nifTensor : numy::tnsr::getErrAtom(env);
+}

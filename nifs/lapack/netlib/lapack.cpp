@@ -374,6 +374,8 @@ static ErlNifFunc nif_funcs[] = {
     {         "tensor_data",   2,             tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {       "tensor_assign",   2,           tensor_assign,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {       "data_copy_all",   2,           data_copy_all,   0},
+    { "tensor_save_to_file",   2,numy_tensor_save_to_file,   ERL_NIF_DIRTY_JOB_IO_BOUND},
+    {"tensor_load_from_file",  1,numy_tensor_load_from_file, ERL_NIF_DIRTY_JOB_IO_BOUND},
     {          "blas_drotg",   2,         numy_blas_drotg,   0},
     {          "blas_dcopy",   5,         numy_blas_dcopy,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "lapack_dgels",   2,       numy_lapack_dgels,   ERL_NIF_DIRTY_JOB_CPU_BOUND},

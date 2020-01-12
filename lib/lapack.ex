@@ -302,6 +302,14 @@ defmodule Numy.Lapack do
     raise "set_op/3 not implemented"
   end
 
+  def tensor_save_to_file(_tensor, _filename) do
+    raise "tensor_save_to_file/2 not implemented"
+  end
+
+  def tensor_load_from_file(_filename) do
+    raise "tensor_load_from_file/1 not implemented"
+  end
+
   def copy(tensor_dst, tensor_src) when is_map(tensor_dst) and is_map(tensor_src) do
     try do
       data_copy_all(tensor_dst.nif_resource, tensor_src.nif_resource)
