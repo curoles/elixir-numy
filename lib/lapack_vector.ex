@@ -372,6 +372,28 @@ defmodule Numy.Lapack.Vector do
 
   end # defimpl Numy.Vcm
 
+
+  @doc """
+
+  ## Examples
+
+      iex(1)> alias Numy.Lapack.Vector
+      Numy.Lapack.Vector
+      iex(2)> a = Vector.new(1..10)
+      #Vector<size=10, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+      iex(3)> b = Vector.new(1..10)
+      #Vector<size=10, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+      iex(4)> Vector.swap_ranges(a,b,3,2,7)
+      :ok
+      iex(5)> a
+      #Vector<size=10, [1.0, 2.0, 8.0, 9.0, 10.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+      iex(6)> b
+      #Vector<size=10, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 3.0, 4.0, 5.0]>
+  """
+  def swap_ranges(v1, v2, nelm, off_a, off_b) do
+    Numy.Lapack.vector_swap_ranges(v1.lapack.nif_resource, v2.lapack.nif_resource,
+      nelm, off_a, off_b)
+  end
 end
 
 defimpl Inspect, for: Numy.Lapack.Vector do

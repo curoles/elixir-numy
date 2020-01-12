@@ -183,7 +183,7 @@ int find_in_vector(const double a[], unsigned length, double val)
 
 static
 void vectors_swap_ranges(double a[], unsigned len_a, unsigned offset_a,
-                         double b[], unsigned len_b, unsigned offset_b)
+                         double b[], unsigned len_b, unsigned offset_b, unsigned count)
 {
     offset_a = std::min(len_a, offset_a);
     offset_b = std::min(len_b, offset_b);
@@ -194,7 +194,7 @@ void vectors_swap_ranges(double a[], unsigned len_a, unsigned offset_a,
     len_a -= offset_a;
     len_b -= offset_b;
 
-    unsigned len = std::min(len_a, len_b);
+    unsigned len = std::min(count, std::min(len_a, len_b));
 
     std::swap_ranges(begin_a, begin_a + len, begin_b);
 }
@@ -823,7 +823,7 @@ ERL_NIF_TERM numy_set_op(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 ERL_NIF_TERM numy_vector_swap_ranges(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    if (argc != 4) {
+    if (argc != 5) {
         return enif_make_badarg(env);
     }
 
@@ -836,10 +836,13 @@ ERL_NIF_TERM numy_vector_swap_ranges(ErlNifEnv* env, int argc, const ERL_NIF_TER
 	    return enif_make_badarg(env);
     }
 
-    //read offsets XXXXXXXXXXXXXXXXXXXXX
+    unsigned offset_a, offset_b, count;
+    if (!enif_get_uint(env, argv[2], &count)) return enif_make_badarg(env);
+    if (!enif_get_uint(env, argv[3], &offset_a)) return enif_make_badarg(env);
+    if (!enif_get_uint(env, argv[4], &offset_b)) return enif_make_badarg(env);
 
-    vectors_swap_ranges(tensor1->dbl_data(), tensor1->nrElements, /*offset_a*/0,
-                        tensor2->dbl_data(), tensor2->nrElements, /*off_b*/0);
+    vectors_swap_ranges(tensor1->dbl_data(), tensor1->nrElements, offset_a,
+                        tensor2->dbl_data(), tensor2->nrElements, offset_b, count);
 
     return numy::tnsr::getOkAtom(env);
 }

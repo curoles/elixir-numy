@@ -42,8 +42,8 @@ defmodule Numy.Lapack do
 
   defp check_nif_version() do
     try do
-      if "#{nif_numy_version()}" != "0.1.3" do
-        raise "NIF Numy version is #{nif_numy_version()}, expected 0.1.3"
+      if "#{nif_numy_version()}" != "0.1.4" do
+        raise "NIF Numy version is #{nif_numy_version()}, expected 0.1.4"
       end
       :ok
     rescue
@@ -292,6 +292,10 @@ defmodule Numy.Lapack do
   def vector_copy_range(_tensor_a, _tensor_b, _count,
      _offset_a \\ 0, _offset_b \\ 0, _stride_a \\ 1, _stride_b \\ 1) do
     raise "vector_copy_range/7 not implemented"
+  end
+
+  def vector_swap_ranges(_tensor_a, _tensor_b, _count, _offset_a \\ 0, _offset_b \\ 0) do
+    raise "vector_swap_ranges/5 not implemented"
   end
 
   def vector_find(_tensor, _val) do

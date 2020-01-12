@@ -1,5 +1,14 @@
 # Releases
 
+## 0.1.4 (01/11/20) add vector operations
+
+- swap ranges
+- copy range
+- negate
+- find value in vector
+- save to file and load from file
+- Set operations
+
 ## 0.1.3 (01/08/20) add vector operations
 
 - set_at

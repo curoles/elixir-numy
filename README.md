@@ -67,7 +67,7 @@ by adding `numy` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:numy, "~> 0.1.3"}
+    {:numy, "~> 0.1.4"}
   ]
 end
 ```
@@ -163,6 +163,7 @@ https://github.com/curoles/numy-tutorials/blob/master/README.md):
 | `reverse!(v)`       |   | x | Reverse in-place                                       |
 | `axpby(v)`          | x |   | cᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
 | `axpby!(v)`         |   | x | aᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
+| `swap_ranges(a,b,n)`|   |   | swap values between 2 vectors                          |
 
 
 ## Set operations
