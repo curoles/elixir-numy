@@ -162,6 +162,29 @@ https://github.com/curoles/numy-tutorials/blob/master/README.md):
 | `axpby(v)`          | x |   | cᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
 | `axpby!(v)`         |   | x | aᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
 
+
+## Set operations
+
+`Numy.Lapack.Vector` implements `Numy.Set` protocol with base Set operations.
+
+> Note: order of elements of input vector can change (they get sorted)
+> when `Numy.Set` functions are invoked.
+
+```elixir
+iex(6)> a = Numy.Lapack.Vector.new(1..5)
+#Vector<size=5, [1.0, 2.0, 3.0, 4.0, 5.0]>
+iex(7)> b = Numy.Lapack.Vector.new(5..10)
+#Vector<size=6, [5.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+iex(8)> Numy.Set.union(a,b)
+#Vector<size=10, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+iex(9)> Numy.Set.intersection(a,b)
+#Vector<size=1, [5.0]>
+iex(10)> Numy.Set.diff(a,b)
+#Vector<size=4, [1.0, 2.0, 3.0, 4.0]>
+iex(11)> Numy.Set.symm_diff(a,b)
+#Vector<size=9, [1.0, 2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+```
+
 <!--## Linear Algebra BLAS
 
 See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145.html).

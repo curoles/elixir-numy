@@ -311,6 +311,21 @@ NUMY_ERL_FUN data_copy_all(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     return enif_make_int(env, size);
 }
 
+NUMY_ERL_FUN tensor_nrelm(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 1) {
+        return enif_make_badarg(env);
+    }
+
+    const numy::Tensor* tensor = numy::tnsr::getTensor(env, argv[0]);
+
+    if (tensor == nullptr or !tensor->isValid()) {
+	    return enif_make_badarg(env);
+    }
+
+    return enif_make_uint(env, tensor->nrElements);
+}
+
 //http://www.netlib.org/lapack/explore-html/d7/d3b/group__double_g_esolve_ga225c8efde208eaf246882df48e590eac.html#ga225c8efde208eaf246882df48e590eac
 NUMY_ERL_FUN numy_lapack_dgels(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -353,6 +368,7 @@ NUMY_ERL_FUN numy_lapack_dgels(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 
 static ErlNifFunc nif_funcs[] = {
     {       "create_tensor",   1,           tensor_create,   0},
+    {        "tensor_nrelm",   1,            tensor_nrelm,   0},
     {    "nif_numy_version",   0,        nif_numy_version,   0},
     {         "fill_tensor",   2,             tensor_fill,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {         "tensor_data",   2,             tensor_data,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
@@ -385,7 +401,8 @@ static ErlNifFunc nif_funcs[] = {
     {      "vector_reverse",   1,     numy_vector_reverse,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {        "vector_axpby",   4,       numy_vector_axpby,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {   "vector_copy_range",   7,  numy_vector_copy_range,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
-    {         "vector_find",   2,        numy_vector_find,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
+    {         "vector_find",   2,        numy_vector_find,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {              "set_op",   3,             numy_set_op,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 
 // Performs all the magic needed to actually hook things up.

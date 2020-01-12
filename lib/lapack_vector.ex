@@ -76,6 +76,11 @@ defmodule Numy.Lapack.Vector do
     new_vec
   end
 
+  def make_from_nif_res(res) do
+    nrelm = Numy.Lapack.tensor_nrelm(res);
+    %Numy.Lapack.Vector{nelm: nrelm, lapack: %Numy.Lapack{nif_resource: res, shape: [nrelm]}}
+  end
+
   defimpl Numy.Vc do
 
     def assign_all(v, val) when is_map(v) and is_number(val) do
@@ -98,8 +103,8 @@ defmodule Numy.Lapack.Vector do
       v
     end
 
-    def data(v) when is_map(v) do
-      Numy.Lapack.data(v.lapack)
+    def data(v, nelm) when is_map(v) and is_integer(nelm) do
+      Numy.Lapack.data(v.lapack, nelm)
     end
 
     def at(%Numy.Lapack.Vector{nelm: nelm}, index, default) when index < 0 or index >= nelm, do: default
@@ -346,4 +351,56 @@ defmodule Numy.Lapack.Vector do
 
   end # defimpl Numy.Vcm
 
+end
+
+defimpl Inspect, for: Numy.Lapack.Vector do
+  import Inspect.Algebra
+
+  def inspect(v, opts) do
+    opts = %{opts | limit: 10}
+    concat(["#Vector<size=", to_doc(v.nelm, opts), ", ",
+      to_doc(Numy.Vc.data(v), opts), ">"])
+  end
+end
+
+defimpl Numy.Set, for: Numy.Lapack.Vector do
+  @doc """
+  The union of two sets is formed by the elements that are present
+  in either one of the sets, or in both.
+
+  C = A ∪ B = {x : x ∈ A or x ∈ B}
+  """
+  def union(a, b) when is_map(a) and is_map(b) do
+    res = Numy.Lapack.set_op(a.lapack.nif_resource, b.lapack.nif_resource, :union)
+    Numy.Lapack.Vector.make_from_nif_res(res)
+  end
+
+  @doc """
+  The intersection of two sets is formed only by the elements
+  that are present in both sets.
+
+  C = A ∩ B = {x : x ∈ A and x ∈ B}
+  """
+  def intersection(a, b) when is_map(a) and is_map(b) do
+    res = Numy.Lapack.set_op(a.lapack.nif_resource, b.lapack.nif_resource, :intersection)
+    Numy.Lapack.Vector.make_from_nif_res(res)
+  end
+
+  @doc """
+  The difference of two sets is formed by the elements
+  that are present in the first set, but not in the second one.
+  """
+  def diff(a, b) when is_map(a) and is_map(b) do
+    res = Numy.Lapack.set_op(a.lapack.nif_resource, b.lapack.nif_resource, :diff)
+    Numy.Lapack.Vector.make_from_nif_res(res)
+  end
+
+  @doc """
+  The symmetric difference of two sets is formed by the elements
+  that are present in one of the sets, but not in the other.
+  """
+  def symm_diff(a, b) when is_map(a) and is_map(b) do
+    res = Numy.Lapack.set_op(a.lapack.nif_resource, b.lapack.nif_resource, :symm_diff)
+    Numy.Lapack.Vector.make_from_nif_res(res)
+  end
 end

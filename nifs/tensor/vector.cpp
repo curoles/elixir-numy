@@ -12,6 +12,7 @@
 #include <functional>
 #include <cmath>
 #include <cassert>
+#include <cstring>
 
 #include <erl_nif.h>
 
@@ -760,7 +761,7 @@ ERL_NIF_TERM numy_vector_axpby(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
     return numy::tnsr::getOkAtom(env);
 }
 
-ERL_NIF_TERM numy_mapset_op(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+ERL_NIF_TERM numy_set_op(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     if (argc != 3) {
         return enif_make_badarg(env);
@@ -775,18 +776,49 @@ ERL_NIF_TERM numy_mapset_op(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 	    return enif_make_badarg(env);
     }
 
+    char atom[64];
+    if (!enif_get_atom(env, argv[2], atom, sizeof(atom), ERL_NIF_LATIN1)) {
+        return enif_make_badarg(env);
+    }
     enum SETOP op {SETOP_UNION};
     
-    //switch (atom){SETOP_UNION, SETOP_INTERSECTION, SETOP_DIFF, SETOP_SYMM_DIFF};
+    if (0 == strcmp(atom, "union")) op = SETOP_UNION;
+    else if (0 == strcmp(atom, "intersection")) op = SETOP_INTERSECTION;
+    else if (0 == strcmp(atom, "diff")) op = SETOP_DIFF;
+    else if (0 == strcmp(atom, "symm_diff")) op = SETOP_SYMM_DIFF;
+    else return enif_make_badarg(env);
 
     std::vector<double> resv;
 
     vector_setop(tensor1->dbl_data(), tensor1->nrElements,
                  tensor2->dbl_data(), tensor2->nrElements, op, resv);
- 
-    //FIXME TODO XXXXXXXXXXXXXX from resv make List
 
-    return numy::tnsr::getOkAtom(env);
+    using namespace numy::tnsr;
+    NIFResource* resourceMngr = (NIFResource*) enif_priv_data(env);
+
+    if (resourceMngr == nullptr)
+        return enif_make_badarg(env);
+
+    numy::Tensor* tensor = resourceMngr->allocate();
+
+    if (tensor == nullptr)
+        return enif_make_badarg(env);
+
+    ERL_NIF_TERM nifTensor = enif_make_resource(env, tensor);
+
+    enif_release_resource(tensor);
+
+    tensor->magic      = numy::Tensor::MAGIC;
+    tensor->nrDims     = 1;
+    tensor->nrElements = resv.size();
+    tensor->shape[0]   = tensor->nrElements;
+    tensor->dtype      = numy::Tensor::T_DBL;
+    tensor->dataSize   = tensor->nrElements * sizeof(double);
+    tensor->data       = enif_alloc(tensor->dataSize);
+
+    std::copy(resv.begin(), resv.end(), tensor->dbl_data());
+
+    return nifTensor;
 }
 
 ERL_NIF_TERM numy_vector_swap_ranges(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])

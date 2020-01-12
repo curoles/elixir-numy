@@ -42,8 +42,12 @@ defmodule Numy.BigVector do
       %{v | data: List.duplicate(val, v.nelm)}
     end
 
-    def data(v) when is_map(v) do
-      v.data
+    def data(v, nelm) when is_map(v) and is_integer(nelm) do
+      if nelm < 0 do
+        v.data
+      else
+        Enum.take(v.data, nelm)
+      end
     end
 
     def at(v, index, default \\ nil) when is_map(v) and is_integer(index) do
@@ -173,6 +177,14 @@ defmodule Numy.BigVector do
     def concat(%Numy.BigVector{nelm: sz1, data: d1} = _v1,
                %Numy.BigVector{nelm: sz2, data: d2} = _v2) do
       %Numy.BigVector{nelm: sz1+sz2, data: d1 ++ d2}
+    end
+
+    def find(v,val) when is_map(v) and is_number(val) do
+      Enum.find_index(v.data, fn x -> x == (val / 1) end)
+    end
+
+    def contains?(v,val) when is_map(v) and is_number(val) do
+      Enum.member?(v.data, (val / 1))
     end
 
   end # defimpl Numy.Vc do

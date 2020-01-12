@@ -94,6 +94,10 @@ defmodule Numy.Lapack do
     end
   end
 
+  def tensor_nrelm(_tensor) do
+    raise "tensor_nrelm/1 not implemented"
+  end
+
   def fill_tensor(_tensor, _fill_val) do
     raise "fill/2 not implemented"
   end
@@ -292,6 +296,10 @@ defmodule Numy.Lapack do
 
   def vector_find(_tensor, _val) do
     raise "vector_find/2 not implemented"
+  end
+
+  def set_op(_tensor1, _tensor2, _op) do
+    raise "set_op/3 not implemented"
   end
 
   def copy(tensor_dst, tensor_src) when is_map(tensor_dst) and is_map(tensor_src) do
