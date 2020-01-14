@@ -15,6 +15,8 @@ defprotocol Numy.Vc do
 
   @doc "Return true if vector is empty."
   def empty?(v)
+  @doc "Return size/length of the vector."
+  def size(v)
 
   @doc "Get data as a list"
   def data(v, nelm \\ -1)

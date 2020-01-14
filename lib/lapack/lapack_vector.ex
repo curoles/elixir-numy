@@ -137,6 +137,11 @@ defmodule Numy.Lapack.Vector do
       v.nelm == 0
     end
 
+    @doc "Return size/length of the vector."
+    def size(v) when is_map(v) do
+      v.nelm
+    end
+
     def equal?(v1,v2) when is_map(v1) and is_map(v2) do
       Numy.Lapack.vector_equal(v1.lapack.nif_resource, v2.lapack.nif_resource)
     end

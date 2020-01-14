@@ -64,6 +64,10 @@ defmodule Numy.Vector do
       v.nelm == 0
     end
 
+    def size(v) when is_map(v) do
+      v.nelm
+    end
+
     def equal?(v1,v2) when is_map(v1) and is_map(v2) do
       Numy.Float.equal?(v1.data, v2.data)
     end
