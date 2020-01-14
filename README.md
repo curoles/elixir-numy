@@ -17,7 +17,7 @@ Online API documentation is [here](https://hexdocs.pm/numy/readme.html).
 - [Installation](#installation)
 - [Mutable internal state](#mutable-internal-state)
 - [Vector operations](#vector-operations)
-
+- [Set operations](#set-operations)
 
 ## Example
 

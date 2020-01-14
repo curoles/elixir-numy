@@ -297,6 +297,7 @@ defmodule Numy.Lapack.Vector do
       end
     end
 
+    @spec offset!(map, number) :: :error
     def offset!(v, factor) when is_map(v) and is_number(factor) do
       try do
         Numy.Lapack.vector_offset(v.lapack.nif_resource, factor)
@@ -315,7 +316,7 @@ defmodule Numy.Lapack.Vector do
       end
     end
 
-    def apply_heaviside!(v, cutoff) when is_map(v) and is_number(cutoff) do
+    def apply_heaviside!(v, cutoff \\ 0.0) when is_map(v) and is_number(cutoff) do
       try do
         Numy.Lapack.vector_heaviside(v.lapack.nif_resource, cutoff)
         v

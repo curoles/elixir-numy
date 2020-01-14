@@ -67,7 +67,7 @@ defmodule Numy.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc,   "~> 0.21", only: :dev, runtime: false},
+      {:ex_doc,  "~> 0.21", only: :dev, runtime: false},
       {:benchee, "~> 1.0",  only: [:dev, :test]},
       {:flow, "~> 0.15.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
