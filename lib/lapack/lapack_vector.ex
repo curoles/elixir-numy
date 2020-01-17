@@ -194,7 +194,7 @@ defmodule Numy.Lapack.Vector do
     end
 
     @doc "Average (∑aᵢ)/length"
-    def average(%Numy.Vector{nelm: nelm, data: _}) when nelm == 0 do
+    def mean(%Numy.Vector{nelm: nelm, data: _}) when nelm == 0 do
       raise "empty vector";
     end
     def average(%Numy.Vector{nelm: nelm, data: _} = v) do

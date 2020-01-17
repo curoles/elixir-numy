@@ -17,8 +17,8 @@ defmodule NumyTest do
     alias Numy.Vcm, as: Vcm
     v = Numy.Vector.new([1,2,3])
     assert Vc.equal?(Vc.add(v,v), Vc.scale(v,2))
-    bv = Numy.BigVector.new([1,2,3])
-    assert Vc.equal?(Vc.add(v,v), Vc.scale(bv,2))
+    #bv = Numy.BigVector.new([1,2,3])
+    #assert Vc.equal?(Vc.add(v,v), Vc.scale(bv,2))
     lv = Numy.Lapack.Vector.new([1,2,3])
     Vcm.add!(lv,lv)
     assert Numy.Float.equal?([2.0,4.0,6.0], Vc.data(lv))

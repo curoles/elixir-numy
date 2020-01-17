@@ -125,8 +125,8 @@ defmodule Numy.Vector do
     end
 
     @doc "Average (∑aᵢ)/length"
-    def average(%Numy.Vector{nelm: nelm, data: _}) when nelm == 0, do: 0.0
-    def average(%Numy.Vector{nelm: nelm, data: _} = v) do
+    def mean(%Numy.Vector{nelm: nelm, data: _}) when nelm == 0, do: 0.0
+    def mean(%Numy.Vector{nelm: nelm, data: _} = v) do
       Enum.sum(v.data) / nelm
     end
 

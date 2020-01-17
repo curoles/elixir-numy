@@ -48,7 +48,7 @@ defprotocol Numy.Vc do
   @doc "Sum of all elements, ∑aᵢ"
   def sum(v)
   @doc "Average (∑aᵢ)/length"
-  def average(v)
+  def mean(v)
 
   @doc "Return max value"
   def max(v)
