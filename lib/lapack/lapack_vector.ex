@@ -452,4 +452,19 @@ defimpl Numy.Set, for: Numy.Lapack.Vector do
     res = Numy.Lapack.set_op(a.lapack.nif_resource, b.lapack.nif_resource, :symm_diff)
     Numy.Lapack.Vector.make_from_nif_res(res)
   end
+
+  @doc """
+  The [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)
+  (also known as similarity coefficient)
+  measures similarity between finite sample sets, and is defined as
+  the size of the intersection divided by the size of the union of the sample sets.
+  """
+  def jaccard_index(a, b) when is_map(a) and is_map(b) do
+    union_size = Numy.Set.union(a, b) |> Numy.Vc.size
+    intersection_size = Numy.Set.intersection(a, b) |> Numy.Vc.size
+    cond do
+      union_size == 0 -> raise ArgumentError, message: "divide by 0"
+      true -> intersection_size / union_size
+    end
+  end
 end

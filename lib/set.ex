@@ -50,4 +50,22 @@ defprotocol Numy.Set do
   that are present in one of the sets, but not in the other.
   """
   def symm_diff(a, b)
+
+  @doc """
+  The [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)
+  (also known as similarity coefficient)
+  measures similarity between finite sample sets, and is defined as
+  the size of the intersection divided by the size of the union of the sample sets.
+
+  ## Examples
+
+      iex(1)> a = Numy.Lapack.Vector.new(1..6)
+      #Vector<size=6, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]>
+      iex(2)> b = Numy.Lapack.Vector.new(5..10)
+      #Vector<size=6, [5.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+      iex(3)> Numy.Set.jaccard_index(a,b)
+      0.2
+  """
+  def jaccard_index(a, b)
+
 end
