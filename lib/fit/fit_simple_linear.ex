@@ -25,7 +25,7 @@ defmodule Numy.Fit.SimpleLinear do
   end
 
   def fit(x,y) do
-    if Vc.size(x) != Vc.size(y), do: raise BadArgument, message: "vectors must have the same size"
+    if Vc.size(x) != Vc.size(y), do: raise ArgumentError, message: "vectors must have the same size"
     x_mean = Vc.mean(x)
     y_mean = Vc.mean(y)
     slope = covariance_over_variance(x,y)
@@ -65,7 +65,7 @@ defmodule Numy.Fit.SimpleLinear do
     x_mean = Vc.mean(x)
     y_mean = Vc.mean(y)
     dx = Vc.clone(x) |> Vcm.offset!(-x_mean)
-    dy = Vc.clone(y) |> Vcm.offset(!-y_mean)
+    dy = Vc.clone(y) |> Vcm.offset!(-y_mean)
     cov = Vc.dot(dx,dy)
     sum_sq_dx = dx |> Vcm.pow2! |> Vc.sum
     var = sum_sq_dx / (Vc.size(x) - 1)

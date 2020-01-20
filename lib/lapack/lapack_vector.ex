@@ -199,10 +199,10 @@ defmodule Numy.Lapack.Vector do
     end
 
     @doc "Average (∑aᵢ)/length"
-    def mean(%Numy.Vector{nelm: nelm, data: _}) when nelm == 0 do
+    def mean(%Numy.Lapack.Vector{nelm: nelm, lapack: _}) when nelm == 0 do
       raise "empty vector";
     end
-    def average(%Numy.Vector{nelm: nelm, data: _} = v) do
+    def mean(%Numy.Lapack.Vector{nelm: nelm, lapack: _} = v) do
       Numy.Vc.sum(v) / nelm
     end
 
@@ -255,6 +255,22 @@ defmodule Numy.Lapack.Vector do
 
     def contains?(v,val) when is_map(v) and is_number(val) do
       Numy.Vc.find(v,val) != -1
+    end
+
+    def abs(v) when is_map(v) do
+      Numy.Vcm.abs!(LVec.new(v))
+    end
+
+    def pow2(v) when is_map(v) do
+      Numy.Vcm.pow2!(LVec.new(v))
+    end
+
+    def pow(v,p) when is_map(v) do
+      Numy.Vcm.pow!(LVec.new(v),p)
+    end
+
+    def norm2(v) when is_map(v) do
+      Numy.Lapack.vector_norm2(v.lapack.nif_resource)
     end
 
   end # defimpl Numy.Vc
@@ -376,6 +392,33 @@ defmodule Numy.Lapack.Vector do
       try do
         Numy.Lapack.vector_axpby(v1.lapack.nif_resource, v1.lapack.nif_resource, f1, f2)
         v1
+      rescue
+        _ -> :error
+      end
+    end
+
+    def abs!(v) when is_map(v) do
+      try do
+        Numy.Lapack.vector_abs(v.lapack.nif_resource)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def pow2!(v) when is_map(v) do
+      try do
+        Numy.Lapack.vector_pow2(v.lapack.nif_resource)
+        v
+      rescue
+        _ -> :error
+      end
+    end
+
+    def pow!(v,p) when is_map(v) and is_number(p) do
+      try do
+        Numy.Lapack.vector_pow(v.lapack.nif_resource, p)
+        v
       rescue
         _ -> :error
       end

@@ -189,12 +189,26 @@ defmodule Numy.Vector do
       Enum.member?(v.data, (val / 1))
     end
 
+    def abs(%Numy.Vector{nelm: nelm, data: data}) do
+      %Numy.Vector{nelm: nelm, data: Enum.map(data, fn x -> Kernel.abs(x) end)}
+    end
+
+    def pow2(%Numy.Vector{nelm: nelm, data: data}) do
+      %Numy.Vector{nelm: nelm, data: Enum.map(data, fn x -> x * x end)}
+    end
+
+    def pow(%Numy.Vector{nelm: nelm, data: data}, p) do
+      %Numy.Vector{nelm: nelm, data: Enum.map(data, fn x -> :math.pow(x,p) end)}
+    end
+
+    def norm2(v) do
+      v |> Enum.reduce(0, fn x, acc -> acc + (x * x) end) |> :math.sqrt
+    end
   end # defimpl Numy.Vc do
 
   def mean_sq_err(v1, v2) do
     sum_sq_err = Enum.zip(v1.data, v2.data)
-    |> Enum.map(fn {a,b} -> (a - b)*(a - b) end)
-    |> Enum.sum
+    |> Enum.reduce(0, fn {a,b}, acc -> acc + (a - b)*(a - b) end)
 
     sum_sq_err / min(v1.nelm, v2.nelm)
   end

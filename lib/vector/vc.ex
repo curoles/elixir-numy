@@ -81,6 +81,14 @@ defprotocol Numy.Vc do
 
   @doc "Return true if vector contains the value"
   def contains?(v,val)
+
+  @doc "√x₀² + x₁² + ... + xₙ²"
+  def norm2(v)
+
+  def pow2(v)
+  def pow(v,p)
+
+  def abs(v)
 end
 
 defprotocol Numy.Vcm do
@@ -124,4 +132,9 @@ defprotocol Numy.Vcm do
 
   @doc "aᵢ ← aᵢ×factor_a + bᵢ×factor_b"
   def axpby!(v1, v2, f1, f2)
+
+  def abs!(v)
+
+  def pow2!(v)
+  def pow!(v,p)
 end
