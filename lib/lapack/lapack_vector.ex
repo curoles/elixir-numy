@@ -104,6 +104,11 @@ defmodule Numy.Lapack.Vector do
 
   defimpl Numy.Vc do
 
+    @doc "Make a clone"
+    def clone(%Numy.Lapack.Vector{} = v) do
+      Numy.Lapack.Vector.new(v)
+    end
+
     def assign_all(v, val) when is_map(v) and is_number(val) do
       Numy.Lapack.vector_assign_all(v.lapack.nif_resource, val)
       v

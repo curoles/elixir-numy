@@ -32,6 +32,12 @@ defmodule Numy.Vector do
 
   defimpl Numy.Vc do
 
+    @doc "Make a clone"
+    def clone(%Numy.Vector{} = v) do
+      c = v
+      c
+    end
+
     def assign_zeros(v) when is_map(v) do
       %{v | data: List.duplicate(0.0, v.nelm)}
     end

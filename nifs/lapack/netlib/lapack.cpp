@@ -405,6 +405,10 @@ static ErlNifFunc nif_funcs[] = {
     {   "vector_copy_range",   7,  numy_vector_copy_range,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {  "vector_swap_ranges",   5, numy_vector_swap_ranges,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {         "vector_find",   2,        numy_vector_find,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_abs",   1,         numy_vector_abs,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {          "vector_pow",   2,         numy_vector_pow,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {         "vector_pow2",   1,        numy_vector_pow2,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
+    {        "vector_norm2",   1,       numy_vector_norm2,   ERL_NIF_DIRTY_JOB_CPU_BOUND},
     {              "set_op",   3,             numy_set_op,   ERL_NIF_DIRTY_JOB_CPU_BOUND}
 };
 

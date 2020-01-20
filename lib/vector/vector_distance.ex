@@ -18,9 +18,7 @@ defmodule Numy.Vector.Distance do
 
   #def euclidean(x,y) do
   #  Vc.sub(x-y) |>
-  #  Vcm.pow2!   |>
-  #  Vc.sum      |>
-  #  :math.sqrt
+  #  Vc.norm2
   #end
 
   @doc """
@@ -50,8 +48,8 @@ defmodule Numy.Vector.Distance do
   #  dx = Vc.sub(x - x_mean)
   #  dy = Vc.sub(y - y_mean)
   #  cov = Vc.dot(dx,dy)
-  #  sx = :math.sqrt(Vcm.pow2!(dx) |> Vc.sum)
-  #  sy = :math.sqrt(Vcm.pow2!(dy) |> Vc.sum)
+  #  sx = Vc.norm2(dx)
+  #  sy = Vc.norm2(dy)
   #  cov / (sx * sy)
   #end
 

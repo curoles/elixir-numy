@@ -4,6 +4,9 @@ defprotocol Numy.Vc do
   Interface to immutable Vector.
   """
 
+  @doc "Make a clone"
+  def clone(v)
+
   @doc "Assign 0.0 to each element of the vector."
   def assign_zeros(v)
   @doc "Assign 1.0 to each element of the vector."

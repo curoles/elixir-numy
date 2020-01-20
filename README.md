@@ -118,6 +118,7 @@ https://github.com/curoles/numy-tutorials/blob/master/README.md):
 | `new(nelm)`         |   |   | Create new vector of size nelm                         |
 | `new(list)`         |   |   | Create new vector from Elixir list                     |
 | `new(v)`            |   |   | Create new vector as copy of another vector            |
+| `clone(v)`          | x |   | Make a clone of original vector                        |
 | `new(v1,v2)`        |   |   | Create new vector as concatenation of 2 other vectors  |
 | `save_to_file(v)`   |   |   | Save vectors to a file                                 |
 | `load_from_file(fn)`|   |   | Load vecotr from a file                                |
@@ -164,14 +165,22 @@ https://github.com/curoles/numy-tutorials/blob/master/README.md):
 | `axpby(v)`          | x |   | cᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
 | `axpby!(v)`         |   | x | aᵢ ← aᵢ×factor_a + bᵢ×factor_b                         |
 | `swap_ranges(a,b,n)`|   |   | swap values between 2 vectors                          |
-
+| `abs(v)`            | x |   |  |
+| `abs!(v)`           |   | x |  |
+| `pow(v)`            | x |   |  |
+| `pow!(v)`           |   | x |  |
+| `pow2(v)`           | x |   | cᵢ ← aᵢ²|
+| `pow2!(v)`          |   | x | aᵢ ← aᵢ² |
+| `norm2(v)`          | x |   | √x₀² + x₁² + ... + xₙ² |
 
 ## Set operations
 
-`Numy.Lapack.Vector` implements `Numy.Set` protocol with base Set operations.
+`Numy.Lapack.Vector` implements `Numy.Set` protocol with base Set operations:
+`union`, `intersection`, `diff`, `symm_diff`, `jaccard_index`.
 
 > Note: order of elements of input vector can change (they get sorted)
-> when `Numy.Set` functions are invoked.
+> when `Numy.Set` functions are invoked. In other words, Set functions
+> mutate inputs.
 
 ```elixir
 iex(6)> a = Numy.Lapack.Vector.new(1..5)

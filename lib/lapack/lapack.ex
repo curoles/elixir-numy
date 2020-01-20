@@ -302,6 +302,22 @@ defmodule Numy.Lapack do
     raise "vector_find/2 not implemented"
   end
 
+  def vector_abs(_tensor) do
+    raise "vector_abs/1 not implemented"
+  end
+
+  def vector_pow(_tensor, _power) do
+    raise "vector_pow/2 not implemented"
+  end
+
+  def vector_pow2(_tensor) do
+    raise "vector_pow2/1 not implemented"
+  end
+
+  def vector_norm2(_tensor) do
+    raise "vector_norm2/1 not implemented"
+  end
+
   def set_op(_tensor1, _tensor2, _op) do
     raise "set_op/3 not implemented"
   end
