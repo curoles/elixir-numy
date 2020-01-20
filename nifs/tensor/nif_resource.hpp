@@ -108,3 +108,11 @@ static inline ERL_NIF_TERM getBoolAtom(ErlNifEnv* env, bool truth) {
 }
 
 } // namespace numy::tnsr
+
+
+int numy_load_nif(ErlNifEnv* env, void** priv, ERL_NIF_TERM info);
+int numy_reload_nif(ErlNifEnv* env, void** priv, ERL_NIF_TERM info);
+int numy_upgrade_nif(ErlNifEnv* env, void** priv, void** old_priv, ERL_NIF_TERM info);
+void numy_unload_nif(ErlNifEnv* env, void* priv);
+
+ERL_NIF_TERM numy_tensor_create(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
