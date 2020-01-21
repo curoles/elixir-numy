@@ -10,16 +10,38 @@ defmodule Numy.Vector.Distance do
   alias Numy.Vcm
 
 
-  #def manhatten(x,y) do
-  #  Vc.sub(x-y) |>
-  #  Vcm.abs!    |>
-  #  Vc.sum
-  #end
+  @doc """
 
-  #def euclidean(x,y) do
-  #  Vc.sub(x-y) |>
-  #  Vc.norm2
-  #end
+  ## Example
+
+      iex(45)> x = Numy.Lapack.Vector.new([1,1])
+      #Vector<size=2, [1.0, 1.0]>
+      iex(46)> y = Numy.Lapack.Vector.new([4,5])
+      #Vector<size=2, [4.0, 5.0]>
+      iex(47)> Numy.Vector.Distance.manhatten(x,y)
+      7.0
+  """
+  def manhatten(x,y) do
+    Vc.sub(x,y) |>
+    Vcm.abs!    |>
+    Vc.sum
+  end
+
+  @doc """
+
+  ## Example
+
+      iex(45)> x = Numy.Lapack.Vector.new([1,1])
+      #Vector<size=2, [1.0, 1.0]>
+      iex(46)> y = Numy.Lapack.Vector.new([4,5])
+      #Vector<size=2, [4.0, 5.0]>
+      iex(49)> Numy.Vector.Distance.euclidean(x,y)
+      5.0 # (4-1)^2 + (5-1)^2 = 9 + 16 = 25
+  """
+  def euclidean(x,y) do
+    Vc.sub(x,y) |>
+    Vc.norm2
+  end
 
   @doc """
   https://en.wikipedia.org/wiki/Minkowski_distance

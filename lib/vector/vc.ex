@@ -85,9 +85,17 @@ defprotocol Numy.Vc do
   @doc "√x₀² + x₁² + ... + xₙ²"
   def norm2(v)
 
+  @doc """
+      iex(2)> Numy.Lapack.Vector.new(-3..3) |> Numy.Vc.pow2
+      #Vector<size=7, [9.0, 4.0, 1.0, 0.0, 1.0, 4.0, 9.0]>
+  """
   def pow2(v)
   def pow(v,p)
 
+  @doc """
+      iex(1)> Numy.Lapack.Vector.new(-3..3) |> Numy.Vc.abs
+      #Vector<size=7, [3.0, 2.0, 1.0, 0.0, 1.0, 2.0, 3.0]>
+  """
   def abs(v)
 end
 

@@ -15,6 +15,22 @@ defmodule Numy.Fit.SimpleLinear do
   > β = cov(x,y) / var(x)
   > α = ȳ - βx̄
   >
+
+  ## Example
+
+      iex(34)> x = Numy.Lapack.Vector.new(0..9)
+      #Vector<size=10, [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]>
+      iex(35)> y = Vc.scale(x,2) |> Vcm.offset!(-3.0) # make slope=2 and intercept=-3
+      #Vector<size=10, [-3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0, 11.0, 13.0, 15.0]>
+      iex(36)> err = Numy.Lapack.Vector.new(10) |> Vc.assign_random |> Vcm.offset!(-0.5) |> Vcm.scale!(0.1)
+      iex(37)> Vcm.add!(y,err) # add errors to the ideal line
+      iex(38)> line = Numy.Fit.SimpleLinear.fit(x,y)
+      {-2.9939933270609496, 1.9966330251198818} # got intercept=-3 and slope=2 as expected
+      {-2.9939933270609496, 1.9966330251198818}
+      iex(40)> Numy.Fit.SimpleLinear.predict(0,line)
+      -2.9939933270609496
+      iex(41)> Numy.Fit.SimpleLinear.predict(10,line)
+      16.97233692413787
   """
 
   alias Numy.Vc
@@ -42,7 +58,7 @@ defmodule Numy.Fit.SimpleLinear do
   """
   def variance(x) do
     x_mean = Vc.mean(x)
-    sum_sq_dx = Vc.clone(x) |> Vcm.offset!(-x_mean) |> Vcm.pow2! |> Vc.sum
+    sum_sq_dx = Vc.offset(x,-x_mean) |> Vcm.pow2! |> Vc.sum
     sum_sq_dx / (Vc.size(x) - 1)
   end
 
@@ -56,24 +72,25 @@ defmodule Numy.Fit.SimpleLinear do
   def covariance(x,y) do
     x_mean = Vc.mean(x)
     y_mean = Vc.mean(y)
-    dx = Vc.clone(x) |> Vcm.offset!(-x_mean)
-    dy = Vc.clone(y) |> Vcm.offset!(-y_mean)
-    Vc.dot(dx,dy)
+    dx = Vc.offset(x,-x_mean)
+    dy = Vc.offset(y,-y_mean)
+    Vc.dot(dx,dy) / (Vc.size(x) - 1)
   end
 
   def covariance_over_variance(x,y) do
     x_mean = Vc.mean(x)
     y_mean = Vc.mean(y)
-    dx = Vc.clone(x) |> Vcm.offset!(-x_mean)
-    dy = Vc.clone(y) |> Vcm.offset!(-y_mean)
+    dx = Vc.offset(x,-x_mean)
+    dy = Vc.offset(y,-y_mean)
     cov = Vc.dot(dx,dy)
     sum_sq_dx = dx |> Vcm.pow2! |> Vc.sum
-    var = sum_sq_dx / (Vc.size(x) - 1)
+    var = sum_sq_dx
     cov / var
   end
 
   #@doc """
-  #Return value in range [0,1], where 1 means perfect prediction, 0 indicates a prediction that is worse than the mean (???)
+  #Return value in range [0,1], where 1 means perfect prediction,
+  #0 indicates a prediction that is worse than the mean (???)
   #"""
   #def fit_quality(predicted, actual) do
   #  d = Vector.Distance.pearson(predicted, actual)
