@@ -22,3 +22,28 @@ defmodule Numy.Gnuplot do
     end
   end
 end
+
+defmodule Numy.Tools do
+
+  @doc """
+  Perform a parallel map by calling the function against each element
+  in a new process.
+  """
+  def pmap(collection, func) do
+    collection
+    |> Enum.map(&(Task.async(fn -> func.(&1) end)))
+    |> Enum.map(&Task.await/1)
+  end
+  # defp pmap(collection, function) do
+  #   me = self
+  #
+  #   collection
+  #   |> Enum.map(fn (elem) ->
+  #     spawn_link fn -> (send me, { self, function.(elem) }) end
+  #   end)
+  #   |> Enum.map(fn (pid) ->
+  #     receive do { ^pid, result } -> result end
+  #   end)
+  # end
+
+end

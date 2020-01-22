@@ -18,6 +18,7 @@ Online API documentation is [here](https://hexdocs.pm/numy/readme.html).
 - [Mutable internal state](#mutable-internal-state)
 - [Vector operations](#vector-operations)
 - [Set operations](#set-operations)
+- [Simple Linear Regression](#simple-linear-regression)
 
 ## Example
 
@@ -195,6 +196,24 @@ iex(10)> Numy.Set.diff(a,b)
 #Vector<size=4, [1.0, 2.0, 3.0, 4.0]>
 iex(11)> Numy.Set.symm_diff(a,b)
 #Vector<size=9, [1.0, 2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 9.0, 10.0]>
+```
+
+## Simple Linear Regression
+
+Basic vector operation like `mean`, `offset`, `pow2` and `sum`
+allow to implement simple Linear Regression in Elixir.
+Module `Numy.Fit.SimpleLinear` is Elixir code that finds the line that
+fits input data by calculating variance and covariance.
+
+```elixir
+iex(34)> x = Numy.Lapack.Vector.new(0..9)
+#Vector<size=10, [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]>
+iex(35)> y = Vc.scale(x,2) |> Vcm.offset!(-3.0) # make slope=2 and intercept=-3
+#Vector<size=10, [-3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0, 11.0, 13.0, 15.0]>
+iex(36)> err = Numy.Lapack.Vector.new(10) |> Vc.assign_random |> Vcm.offset!(-0.5) |> Vcm.scale!(0.1)
+iex(37)> Vcm.add!(y,err) # add errors to the ideal line
+iex(38)> line = Numy.Fit.SimpleLinear.fit(x,y)
+{-2.9939933270609496, 1.9966330251198818} # got intercept=-3 and slope=2 as expected
 ```
 
 <!--## Linear Algebra BLAS

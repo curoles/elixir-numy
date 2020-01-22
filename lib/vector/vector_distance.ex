@@ -46,34 +46,40 @@ defmodule Numy.Vector.Distance do
   @doc """
   https://en.wikipedia.org/wiki/Minkowski_distance
   """
-  #def minkowski(x,y,p \\ 3) do
-  #  Vc.sub(x-y) |>
-  #  Vcm.abs!    |>
-  #  Vcm.pow!(p) |>
-  #  Vc.sum      |>
-  #  :math.pow(1/p)
-  #end
+  def minkowski(x,y,p \\ 3) do
+    Vc.sub(x,y) |>
+    Vcm.abs!    |>
+    Vcm.pow!(p) |>
+    Vc.sum      |>
+    :math.pow(1/p)
+  end
 
-  #def mean_sq_error(x,y) do
-  #  Vc.sub(x-y) |>
-  #  Vcm.pow2!   |>
-  #  Vc.mean
-  #end
+  def mean_sq_error(x,y) do
+    Vc.sub(x,y) |>
+    Vcm.pow2!   |>
+    Vc.mean
+  end
 
-  #def root_mean_sq_error(x,y) do
-  #  :math.sqrt(mean_sq_error)
-  #end
+  def root_mean_sq_error(x,y) do
+    :math.sqrt(mean_sq_error(x,y))
+  end
 
-  #def pearson(x,y) do
-  #  x_mean = Vc.mean(x)
-  #  y_mean = Vc.mean(y)
-  #  dx = Vc.sub(x - x_mean)
-  #  dy = Vc.sub(y - y_mean)
-  #  cov = Vc.dot(dx,dy)
-  #  sx = Vc.norm2(dx)
-  #  sy = Vc.norm2(dy)
-  #  cov / (sx * sy)
-  #end
+  @doc """
+  Pearson's correlation coefficient is the covariance of the two variables
+  divided by the product of their standard deviations.
+
+  A value of 1 implies that a linear equation describes the relationship
+  between X and Y perfectly, with all data points lying on a line
+  for which Y increases as X increases.
+  A value of 0 implies that there is no linear correlation between the variables.
+  """
+  def pearson(x,y) do
+    x_mean = Vc.mean(x)
+    y_mean = Vc.mean(y)
+    dx = Vc.offset(x,-x_mean)
+    dy = Vc.offset(y,-y_mean)
+    Vc.dot(dx,dy) / (Vc.norm2(dx) * Vc.norm2(dy))
+  end
 
   #def jaccard(x,y) do
   #  1.0 - Numy.Set.jaccard_index(Vc.clone(x), Vc.clone(y))

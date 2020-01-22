@@ -12,8 +12,8 @@ defmodule Numy.Fit.SimpleLinear do
   It is a fact that among all possible α and β, the following
   values minimize the SSR:
 
-  > β = cov(x,y) / var(x)
-  > α = ȳ - βx̄
+  > 1. β = cov(x,y) / var(x)
+  > 2. α = ȳ - βx̄
   >
 
   ## Example
@@ -26,20 +26,28 @@ defmodule Numy.Fit.SimpleLinear do
       iex(37)> Vcm.add!(y,err) # add errors to the ideal line
       iex(38)> line = Numy.Fit.SimpleLinear.fit(x,y)
       {-2.9939933270609496, 1.9966330251198818} # got intercept=-3 and slope=2 as expected
-      {-2.9939933270609496, 1.9966330251198818}
       iex(40)> Numy.Fit.SimpleLinear.predict(0,line)
       -2.9939933270609496
       iex(41)> Numy.Fit.SimpleLinear.predict(10,line)
       16.97233692413787
+      iex(9)> predicted = Numy.Lapack.Vector.new(Numy.Fit.SimpleLinear.predict(Enum.to_list(0..9),line))
+      iex(10)> Numy.Fit.SimpleLinear.pearson_correlation(predicted, y)
+      0.9999884096405113
   """
 
   alias Numy.Vc
   alias Numy.Vcm
 
+  @doc "Calculate y by x using slope and intercept."
   def predict(x, {intercept, slope}) when is_number(x) do
     intercept + slope * x
   end
 
+  def predict(xs, {intercept, slope}) when is_list(xs) do
+    Enum.map(xs, fn x -> intercept + slope * x end)
+  end
+
+  @doc "Find slope and intercept of the line that fits the input data."
   def fit(x,y) do
     if Vc.size(x) != Vc.size(y), do: raise ArgumentError, message: "vectors must have the same size"
     x_mean = Vc.mean(x)
@@ -77,6 +85,7 @@ defmodule Numy.Fit.SimpleLinear do
     Vc.dot(dx,dy) / (Vc.size(x) - 1)
   end
 
+  @doc "Calculate cov/var in one step."
   def covariance_over_variance(x,y) do
     x_mean = Vc.mean(x)
     y_mean = Vc.mean(y)
@@ -88,12 +97,28 @@ defmodule Numy.Fit.SimpleLinear do
     cov / var
   end
 
+  @doc """
+  Pearson's correlation coefficient is the covariance of the two variables
+  divided by the product of their standard deviations.
+
+  A value of 1 implies that a linear equation describes the relationship
+  between X and Y perfectly, with all data points lying on a line
+  for which Y increases as X increases.
+  A value of 0 implies that there is no linear correlation between the variables.
+  """
+  def pearson_correlation(x,y) do
+    x_mean = Vc.mean(x)
+    y_mean = Vc.mean(y)
+    dx = Vc.offset(x,-x_mean)
+    dy = Vc.offset(y,-y_mean)
+    Vc.dot(dx,dy) / (Vc.norm2(dx) * Vc.norm2(dy))
+  end
+
   #@doc """
-  #Return value in range [0,1], where 1 means perfect prediction,
-  #0 indicates a prediction that is worse than the mean (???)
+  #Return value in range [0,1], where 1 means perfect prediction.
   #"""
-  #def fit_quality(predicted, actual) do
-  #  d = Vector.Distance.pearson(predicted, actual)
+  #def fitting_quality(predicted, actual) do
+  #  d = pearson_correlation(predicted, actual)
   #  d * d
   #end
 
