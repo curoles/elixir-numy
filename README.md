@@ -68,7 +68,7 @@ by adding `numy` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:numy, "~> 0.1.4"}
+    {:numy, "~> 0.1.5"}
   ]
 end
 ```

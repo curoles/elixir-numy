@@ -30,7 +30,7 @@ defmodule Numy.MixProject do
   def project do
     [
       app: :numy,
-      version: "0.1.4",
+      version: "0.1.5",
       elixir: "~> 1.9",
       description: "LAPACK based scientific library",
       start_permanent: Mix.env() == :prod,

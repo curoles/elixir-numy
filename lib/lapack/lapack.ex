@@ -42,8 +42,8 @@ defmodule Numy.Lapack do
 
   defp check_nif_version() do
     try do
-      if "#{nif_numy_version()}" != "0.1.4" do
-        raise "NIF Numy version is #{nif_numy_version()}, expected 0.1.4"
+      if "#{nif_numy_version()}" != "0.1.5" do
+        raise "NIF Numy version is #{nif_numy_version()}, expected 0.1.5"
       end
       :ok
     rescue
