@@ -216,6 +216,10 @@ iex(38)> line = Numy.Fit.SimpleLinear.fit(x,y)
 {-2.9939933270609496, 1.9966330251198818} # got intercept=-3 and slope=2 as expected
 ```
 
+See [tutorial](https://github.com/curoles/numy-tutorials/blob/master/fit/FitSimpleLinear.ipynb).
+
+
+
 <!--## Linear Algebra BLAS
 
 See [Quick Reference Guide to the BLAS](http://www.netlib.org/lapack/lug/node145.html).

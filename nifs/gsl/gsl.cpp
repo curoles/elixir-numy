@@ -14,6 +14,8 @@
 
 #include <erl_nif.h>
 
+#include <gsl/gsl_math.h>
+
 #include "tensor/tensor.hpp"
 #include "tensor/nif_resource.hpp"
 

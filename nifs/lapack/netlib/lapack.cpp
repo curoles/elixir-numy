@@ -139,6 +139,7 @@ bool tensor_construct(numy::Tensor* tensor,
     unsigned sizeOfDataType = sizeof(double);
     tensor->dataSize = tensor->nrElements * sizeOfDataType;
     tensor->data = enif_alloc(tensor->dataSize);
+    memset(tensor->data, 0, tensor->dataSize);
 
     return true;
 }

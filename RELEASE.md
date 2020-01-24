@@ -1,5 +1,11 @@
 # Releases
 
+## 0.1.5 (01/23/20) simple linear regression
+
+Module `Numy.Fit.SimpleLinear` finds linear model for input data.
+Covariance and variance are calculated using Vector operations
+like `offset`, `pow2` and `sum`.
+
 ## 0.1.4 (01/11/20) add vector operations
 
 - swap ranges

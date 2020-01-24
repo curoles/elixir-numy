@@ -34,15 +34,18 @@ endif
 
 NETLIB_LAPACK_LIBS := -llapacke -llapack -lblas -lgfortran
 
-#NUMY_VECTOR_LIB := priv/libnumy_vector_${MIX_ENV}.so
-#NUMY_TENSOR_LIB := priv/libnumy_tensor_${MIX_ENV}.so
+
+NUMY_GSL_LIB := priv/libnumy_gsl_${MIX_ENV}.so
 NUMY_LAPACK_LIB := priv/libnumy_lapack_${MIX_ENV}.so
 
 .PHONY: all
-all: ${NUMY_VECTOR_LIB} ${NUMY_TENSOR_LIB} ${NUMY_LAPACK_LIB}
+all: ${NUMY_GSL_LIB} ${NUMY_LAPACK_LIB}
 
-#NUMY_VECTOR_SRC := ./nifs/vector.cpp
-#NUMY_TENSOR_SRC := ./nifs/tensor/tensor.cpp
+
+NUMY_GSL_SRC := ./nifs/gsl/gsl.cpp ./nifs/tensor/nif_resource.cpp
+
+NUMY_GSL_DEPS := ./nifs/tensor/tensor.hpp ./nifs/tensor/nif_resource.hpp
+NUMY_GSL_DEPS += ./nifs/tensor/vector.hpp
 
 NUMY_LAPACK_SRC := ./nifs/lapack/netlib/lapack.cpp ./nifs/tensor/vector.cpp
 NUMY_LAPACK_SRC += ./nifs/lapack/netlib/blas.cpp
@@ -58,18 +61,15 @@ ${NUMY_LAPACK_LIB}: ${NUMY_LAPACK_SRC}
 	@$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ -lstdc++ ${NETLIB_LAPACK_LIBS}
 	@ln -srf $@ priv/libnumy_lapack.so
 
-#${NUMY_VECTOR_LIB}: ${NUMY_VECTOR_SRC}
-#	@mkdir -p ./priv
-#	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
-#	@ln -srf $@ priv/libnumy_vector.so
+./nifs/gsl/gsl.cpp: ${NUMY_GSL_DEPS}
+	@touch $@
 
-#${NUMY_TENSOR_LIB}: ${NUMY_TENSOR_SRC}
-#	@mkdir -p ./priv
-#	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
-#	@ln -srf $@ priv/libnumy_tensor.so
+${NUMY_GSL_LIB}: ${NUMY_GSL_SRC}
+	@mkdir -p ./priv
+	@$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	@ln -srf $@ priv/libnumy_gsl.so
 
 .PHONY: clean
 clean:
 	rm -f ${NUMY_LAPACK_LIB}
-	#rm -f ${NUMY_VECTOR_LIB}
-	#rm -f ${NUMY_TENSOR_LIB}
+	rm -f ${NUMY_GSL_LIB}
